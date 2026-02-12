@@ -9,6 +9,9 @@ public class CharacterInputController : MonoBehaviour {
 
     public string Name = "George P Burdell";
 
+    private Animator animator;
+    private bool isCrouching = false;
+
     private float filteredForwardInput = 0f;
     private float filteredTurnInput = 0f;
 
@@ -18,6 +21,8 @@ public class CharacterInputController : MonoBehaviour {
     public float turnInputFilter = 5f;
 
     private float forwardSpeedLimit = 1f;
+
+
 
 
     public float Forward
@@ -44,7 +49,15 @@ public class CharacterInputController : MonoBehaviour {
         private set;
     }
 
-        
+    public bool IsCrouching
+    {
+        get { return isCrouching; }
+    }
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     void Update () {
 
@@ -57,24 +70,26 @@ public class CharacterInputController : MonoBehaviour {
         h = (Keyboard.current.dKey.isPressed ? 1f : 0f) + (Keyboard.current.aKey.isPressed ? -1f : 0f);
         v = (Keyboard.current.wKey.isPressed ? 1f : 0f) + (Keyboard.current.sKey.isPressed ? -1f : 0f);
         Jump = Keyboard.current.spaceKey.wasPressedThisFrame;
+        
+        isCrouching = Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.cKey.isPressed;
     }
 #else
-    //GetAxisRaw() so we can do filtering here instead of the InputManager
-    h = Input.GetAxisRaw("Horizontal");// setup h variable as our horizontal input axis
-    v = Input.GetAxisRaw("Vertical"); // setup v variables as our vertical input axis
+    
+    h = Input.GetAxisRaw("Horizontal");
+    v = Input.GetAxisRaw("Vertical");
     Jump = Input.GetButtonDown("Jump");
+    
+    isCrouching = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C);
 #endif
 
 
         if (InputMapToCircular)
         {
-            // make coordinates circular
-            //based on http://mathproofs.blogspot.com/2005/07/mapping-square-to-circle.html
+  
             h = h * Mathf.Sqrt(1f - 0.5f * v * v);
             v = v * Mathf.Sqrt(1f - 0.5f * h * h);        
 
 
-        //do some filtering of our input as well as clamp to a speed limit
         filteredForwardInput = Mathf.Clamp(Mathf.Lerp(filteredForwardInput, v, 
             Time.deltaTime * forwardInputFilter), -forwardSpeedLimit, forwardSpeedLimit);
 
@@ -84,7 +99,17 @@ public class CharacterInputController : MonoBehaviour {
         Forward = filteredForwardInput;
         Turn = filteredTurnInput;
 
-
+        if (animator != null)
+        {
+            float speed = new Vector2(h, v).magnitude;
+            animator.SetFloat("speed", speed);
+            animator.SetBool("isCrouching", isCrouching);
+            
+            Vector2 moveVector = new Vector2(h, v);
+            moveVector = Vector2.ClampMagnitude(moveVector, 1f); // prevents diagonals > 1
+            animator.SetFloat("MoveX", moveVector.x, 0.1f, Time.deltaTime);
+            animator.SetFloat("MoveY", moveVector.y, 0.1f, Time.deltaTime);
+        }
 
         }
 
