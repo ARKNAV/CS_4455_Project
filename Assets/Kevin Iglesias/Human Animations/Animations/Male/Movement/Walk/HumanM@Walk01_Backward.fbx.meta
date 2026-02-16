@@ -69,7 +69,14 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.51272726
+      - time: 0.054545455
+        functionName: 
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.5090909
         functionName: EmitFootstep
         data: 
         objectReferenceParameter: {instanceID: 0}
