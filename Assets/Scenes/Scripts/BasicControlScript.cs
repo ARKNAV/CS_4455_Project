@@ -16,8 +16,6 @@ public class BasicControlScript : MonoBehaviour
 
     public float forwardMaxSpeed = 1f;
     public float turnMaxSpeed = 1f;
-
-    //Useful if you implement jump in the future...
     public float jumpableGroundNormalMaxAngle = 45f;
     public bool closeToJumpableGround;
 
@@ -56,7 +54,6 @@ public class BasicControlScript : MonoBehaviour
 
     void Start()
     {
-		//example of how to get access to certain limbs
         leftFoot = this.transform.Find("mixamorig:Hips/mixamorig:LeftUpLeg/mixamorig:LeftLeg/mixamorig:LeftFoot");
         rightFoot = this.transform.Find("mixamorig:Hips/mixamorig:RightUpLeg/mixamorig:RightLeg/mixamorig:RightFoot");
 
@@ -79,37 +76,23 @@ public class BasicControlScript : MonoBehaviour
             inputTurn = cinput.Turn;
         }
 
-        //onCollisionXXX() doesn't always work for checking if the character is grounded from a playability perspective
-        //Uneven terrain can cause the player to become technically airborne, but so close the player thinks they're touching ground.
-        //Therefore, an additional raycast approach is used to check for close ground
         bool isGrounded = IsGrounded || CharacterCommon.CheckGroundNear(this.transform.position, jumpableGroundNormalMaxAngle, 0.1f, 1f, out closeToJumpableGround);
 
-        //We use rbody.MovePosition() as it's the most efficient and safest way to directly control position in Unity's Physics
-        //Move on the XZ plane (X for horizontal, Z for vertical)
         Vector3 move = new Vector3(inputTurn, 0f, inputForward) * Time.deltaTime * forwardMaxSpeed;
         rbody.MovePosition(rbody.position + move);
-
-
-        //anim.SetFloat("velx", inputTurn); 
-        anim.SetFloat("vely", inputForward);
-        anim.SetBool("isFalling", !isGrounded);
 
     }
 
 
 
 
-    //This is a physics callback
     void OnCollisionEnter(Collision collision)
     {
-
         if (collision.transform.gameObject.tag == "ground")
         {
             ++groundContactCount;
-                    
             EventManager.TriggerEvent<PlayerLandsEvent, Vector3, float>(collision.contacts[0].point, collision.impulse.magnitude);
         }
-						
     }
 
     void OnCollisionExit(Collision collision)
