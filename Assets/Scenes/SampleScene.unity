@@ -689,22 +689,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2033105197973300275, guid: 6206c14b6fb53694cb6b0bb8a41fcb9c, type: 3}
   m_PrefabInstance: {fileID: 1145150932}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &820225896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 820225891}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e619bdc7bd6b24340b81d0e59d731af8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Name: Human Dummy
-  InputMapToCircular: 1
-  forwardInputFilter: 5
-  turnInputFilter: 5
 --- !u!114 &820225897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -737,6 +721,7 @@ MonoBehaviour:
   InputMapToCircular: 1
   forwardInputFilter: 5
   turnInputFilter: 5
+  crouchSpeedMultiplier: 0.97
 --- !u!136 &820225899
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -919,9 +904,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1692468126580653705, guid: 6206c14b6fb53694cb6b0bb8a41fcb9c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 820225897}
-    - targetCorrespondingSourceObject: {fileID: 1692468126580653705, guid: 6206c14b6fb53694cb6b0bb8a41fcb9c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 820225896}
     - targetCorrespondingSourceObject: {fileID: 1692468126580653705, guid: 6206c14b6fb53694cb6b0bb8a41fcb9c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 820225900}

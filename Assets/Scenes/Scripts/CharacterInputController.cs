@@ -19,6 +19,7 @@ public class CharacterInputController : MonoBehaviour {
 
     public float forwardInputFilter = 5f;
     public float turnInputFilter = 5f;
+    public float crouchSpeedMultiplier = 0.5f;
 
     private float forwardSpeedLimit = 1f;
 
@@ -96,17 +97,27 @@ public class CharacterInputController : MonoBehaviour {
         filteredTurnInput = Mathf.Lerp(filteredTurnInput, h, 
             Time.deltaTime * turnInputFilter);
 
+        if (isCrouching)
+        {
+            filteredForwardInput *= crouchSpeedMultiplier;
+            filteredTurnInput *= crouchSpeedMultiplier;
+        }
+
         Forward = filteredForwardInput;
         Turn = filteredTurnInput;
 
         if (animator != null)
         {
             float speed = new Vector2(h, v).magnitude;
+            if (isCrouching)
+                speed *= crouchSpeedMultiplier;
             animator.SetFloat("speed", speed);
             animator.SetBool("isCrouching", isCrouching);
             
             Vector2 moveVector = new Vector2(h, v);
-            moveVector = Vector2.ClampMagnitude(moveVector, 1f); // prevents diagonals > 1
+            moveVector = Vector2.ClampMagnitude(moveVector, 1f);
+            if (isCrouching)
+                moveVector *= crouchSpeedMultiplier;
             animator.SetFloat("MoveX", moveVector.x, 0.1f, Time.deltaTime);
             animator.SetFloat("MoveY", moveVector.y, 0.1f, Time.deltaTime);
         }
