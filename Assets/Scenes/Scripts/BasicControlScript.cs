@@ -13,6 +13,10 @@ public class BasicControlScript : MonoBehaviour
 
     private Transform leftFoot;
     private Transform rightFoot;
+    
+    private FootstepSound footstepSound;
+    private float lastFootstepTime = 0f;
+    private float footstepCooldown = 0.3f;
 
     public float forwardMaxSpeed = 1f;
     public float turnMaxSpeed = 1f;

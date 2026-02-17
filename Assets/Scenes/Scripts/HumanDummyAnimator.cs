@@ -14,8 +14,13 @@ public class HumanDummyAnimator : MonoBehaviour
         // TEMP TEST:
         // Hold W to walk
         if (Input.GetKey(KeyCode.W))
+        {
             anim.SetFloat("Speed", 1f);
+            Debug.Log("Setting Speed to 1f");
+        }
         else
+        {
             anim.SetFloat("Speed", 0f);
+        }
     }
 }
