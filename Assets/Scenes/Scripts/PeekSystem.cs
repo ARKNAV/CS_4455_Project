@@ -18,6 +18,11 @@ public class PeekSystem : MonoBehaviour
     public Transform spineBone;
     public float spineLeanAngle = 10f;
     
+    [Header("IK Settings")]
+    public bool useIK = true;
+    public float headTurnAngle = 25f;
+    public float handRaiseHeight = 0.3f;
+    
     private Animator animator;
     private Rigidbody rb;
     private BasicControlScript basicControl;
@@ -25,6 +30,13 @@ public class PeekSystem : MonoBehaviour
     private float currentPeekAmount = 0f;
     private float targetPeekAmount = 0f;
     private int peekDirection = 0; // -1 = left, 0 = none, 1 = right
+    
+    private Transform headBone;
+    private Transform leftHandBone;
+    private Transform rightHandBone;
+    private Quaternion originalHeadRotation;
+    private Vector3 originalLeftHandPos;
+    private Vector3 originalRightHandPos;
     
     private bool qKeyPressed = false;
     private bool qKeyWasPressed = false;
@@ -58,6 +70,30 @@ public class PeekSystem : MonoBehaviour
         
         rb = GetComponent<Rigidbody>();
         basicControl = GetComponent<BasicControlScript>();
+        
+        // Get bone references if using humanoid
+        if (animator.isHuman && useIK)
+        {
+            headBone = animator.GetBoneTransform(HumanBodyBones.Head);
+            leftHandBone = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+            rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
+            
+            if (headBone != null)
+            {
+                originalHeadRotation = headBone.localRotation;
+                Debug.Log("PeekSystem: Found head bone for IK");
+            }
+            if (leftHandBone != null)
+            {
+                originalLeftHandPos = leftHandBone.localPosition;
+                Debug.Log("PeekSystem: Found left hand bone for IK");
+            }
+            if (rightHandBone != null)
+            {
+                originalRightHandPos = rightHandBone.localPosition;
+                Debug.Log("PeekSystem: Found right hand bone for IK");
+            }
+        }
     }
 
     void Update()
@@ -153,6 +189,55 @@ public class PeekSystem : MonoBehaviour
             velocity.x *= 0.9f;
             velocity.z *= 0.9f;
             rb.linearVelocity = velocity;
+        }
+    }
+    
+    void LateUpdate()
+    {
+        if (!useIK || !animator.isHuman) return;
+        
+        // Apply IK to head and hands after animation
+        float ikWeight = Mathf.Abs(currentPeekAmount);
+        
+        // Head turning
+        if (headBone != null && ikWeight > 0.01f)
+        {
+            Quaternion targetHeadRot = headBone.localRotation * Quaternion.Euler(0, headTurnAngle * currentPeekAmount * ikWeight, 0);
+            headBone.localRotation = targetHeadRot;
+        }
+        
+        // Hand raising based on peek direction
+        if (peekDirection == -1 && ikWeight > 0.01f) // Left peek - raise left hand
+        {
+            Transform leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+            Transform leftLowerArm = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+            
+            if (leftUpperArm != null)
+            {
+                Quaternion addRot = Quaternion.Euler(-15 * ikWeight, 0, -65 * ikWeight);
+                leftUpperArm.localRotation = leftUpperArm.localRotation * addRot;
+            }
+            if (leftLowerArm != null)
+            {
+                Quaternion addRot = Quaternion.Euler(0, 0, -50 * ikWeight);
+                leftLowerArm.localRotation = leftLowerArm.localRotation * addRot;
+            }
+        }
+        else if (peekDirection == 1 && ikWeight > 0.01f) // Right peek - raise right hand
+        {
+            Transform rightUpperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+            Transform rightLowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            
+            if (rightUpperArm != null)
+            {
+                Quaternion addRot = Quaternion.Euler(-15 * ikWeight, 0, 65 * ikWeight);
+                rightUpperArm.localRotation = rightUpperArm.localRotation * addRot;
+            }
+            if (rightLowerArm != null)
+            {
+                Quaternion addRot = Quaternion.Euler(0, 0, 50 * ikWeight);
+                rightLowerArm.localRotation = rightLowerArm.localRotation * addRot;
+            }
         }
     }
 }
