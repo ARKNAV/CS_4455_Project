@@ -870,7 +870,7 @@ MonoBehaviour:
   peekDistance: 0.5
   peekRotation: 15
   peekSpeed: 8
-  spineBone: {fileID: 0}
+  spineBone: {fileID: 1052643057}
   spineLeanAngle: 10
 --- !u!1 &832575517
 GameObject:
@@ -921,6 +921,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1052643057 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4844192206201326242, guid: 6206c14b6fb53694cb6b0bb8a41fcb9c, type: 3}
+  m_PrefabInstance: {fileID: 1145150932}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1145150932
 PrefabInstance:
   m_ObjectHideFlags: 0
