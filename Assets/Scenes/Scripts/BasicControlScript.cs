@@ -11,6 +11,8 @@ public class BasicControlScript : MonoBehaviour
     private Rigidbody rbody;
     private CharacterInputController cinput;
 
+    public Transform cameraTransform;
+
     private Transform leftFoot;
     private Transform rightFoot;
     
@@ -20,6 +22,7 @@ public class BasicControlScript : MonoBehaviour
 
     public float forwardMaxSpeed = 1f;
     public float turnMaxSpeed = 1f;
+    public float maxTurnDegreesPerSecond = 360f;
     public float jumpableGroundNormalMaxAngle = 45f;
     public bool closeToJumpableGround;
 
@@ -53,6 +56,9 @@ public class BasicControlScript : MonoBehaviour
         if (cinput == null)
             Debug.Log("CharacterInputController could not be found");
 
+        if (cameraTransform == null && Camera.main != null)
+            cameraTransform = Camera.main.transform;
+
     }
 
 
@@ -82,8 +88,39 @@ public class BasicControlScript : MonoBehaviour
 
         bool isGrounded = IsGrounded || CharacterCommon.CheckGroundNear(this.transform.position, jumpableGroundNormalMaxAngle, 0.1f, 1f, out closeToJumpableGround);
 
-        Vector3 move = new Vector3(inputTurn, 0f, inputForward) * Time.deltaTime * forwardMaxSpeed;
+        Vector3 inputVector = new Vector3(inputTurn, 0f, inputForward);
+        inputVector = Vector3.ClampMagnitude(inputVector, 1f);
+
+        Vector3 moveDirection;
+        if (cameraTransform != null)
+        {
+            Vector3 cameraForward = cameraTransform.forward;
+            cameraForward.y = 0f;
+            cameraForward.Normalize();
+
+            Vector3 cameraRight = cameraTransform.right;
+            cameraRight.y = 0f;
+            cameraRight.Normalize();
+
+            moveDirection = (cameraForward * inputVector.z) + (cameraRight * inputVector.x);
+        }
+        else
+        {
+            moveDirection = inputVector;
+        }
+
+        moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
+
+        Vector3 move = moveDirection * Time.deltaTime * forwardMaxSpeed;
         rbody.MovePosition(rbody.position + move);
+
+        if (moveDirection.sqrMagnitude > 0.0001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            float maxStep = maxTurnDegreesPerSecond * Time.deltaTime;
+            Quaternion limitedRotation = Quaternion.RotateTowards(rbody.rotation, targetRotation, maxStep);
+            rbody.MoveRotation(limitedRotation);
+        }
 
     }
 
