@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 820225894}
-  offset: {x: 1, y: 3, z: -8}
+  offset: {x: 0, y: 2, z: -2}
   followSpeed: 10
   rotationSpeed: 5
   normalFOV: 60
@@ -701,8 +701,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86a9220cdf744cbf84991491c145a98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraTransform: {fileID: 0}
   forwardMaxSpeed: 5
   turnMaxSpeed: 3
+  maxTurnDegreesPerSecond: 360
   jumpableGroundNormalMaxAngle: 45
   closeToJumpableGround: 0
 --- !u!114 &820225898
@@ -872,6 +874,9 @@ MonoBehaviour:
   peekSpeed: 8
   spineBone: {fileID: 1052643057}
   spineLeanAngle: 10
+  useIK: 1
+  headTurnAngle: 25
+  handRaiseHeight: 0.3
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

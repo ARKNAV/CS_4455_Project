@@ -91,20 +91,33 @@ public class CharacterInputController : MonoBehaviour {
             v = v * Mathf.Sqrt(1f - 0.5f * h * h);        
 
 
-        filteredForwardInput = Mathf.Clamp(Mathf.Lerp(filteredForwardInput, v, 
-            Time.deltaTime * forwardInputFilter), -forwardSpeedLimit, forwardSpeedLimit);
+        bool hasMoveInput = Mathf.Abs(h) > 0.001f || Mathf.Abs(v) > 0.001f;
 
-        filteredTurnInput = Mathf.Lerp(filteredTurnInput, h, 
-            Time.deltaTime * turnInputFilter);
+        if (hasMoveInput)
+        {
+            filteredForwardInput = Mathf.Clamp(Mathf.Lerp(filteredForwardInput, v,
+                Time.deltaTime * forwardInputFilter), -forwardSpeedLimit, forwardSpeedLimit);
+
+            filteredTurnInput = Mathf.Lerp(filteredTurnInput, h,
+                Time.deltaTime * turnInputFilter);
+        }
+        else
+        {
+            filteredForwardInput = 0f;
+            filteredTurnInput = 0f;
+        }
+
+        float outputForward = filteredForwardInput;
+        float outputTurn = filteredTurnInput;
 
         if (isCrouching)
         {
-            filteredForwardInput *= crouchSpeedMultiplier;
-            filteredTurnInput *= crouchSpeedMultiplier;
+            outputForward *= crouchSpeedMultiplier;
+            outputTurn *= crouchSpeedMultiplier;
         }
 
-        Forward = filteredForwardInput;
-        Turn = filteredTurnInput;
+        Forward = outputForward;
+        Turn = outputTurn;
 
         if (animator != null)
         {
