@@ -4767,11 +4767,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 890879836}
-  forwardMaxSpeed: 1
-  turnMaxSpeed: 1
-  maxTurnDegreesPerSecond: 360
-  jumpableGroundNormalMaxAngle: 45
+  forwardMaxSpeed: 3.75
+  turnMaxSpeed: 3.25
+  maxTurnDegreesPerSecond: 540
+  jumpableGroundNormalMaxAngle: 50
   closeToJumpableGround: 0
+  acceleration: 18
+  deceleration: 22
+  airControlMultiplier: 0.45
+  groundCheckDistance: 1.25
 --- !u!114 &853079408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4836,9 +4840,159 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 1
+--- !u!114 &853079411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853079403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9710ee7796c71432490aa24eb6623b98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!82 &853079412
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853079403}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: b8ce496724cf7d3449176610b10806d2, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.209
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &853079413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853079403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9591dc076fe574884d4eb22c7f9df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallCheckHeight: 1.35
+  wallCheckDistance: 0.9
+  sideClearanceDistance: 0.8
+  sideProbeForwardOffset: 0.45
+  wallMinNormalY: 0.35
+  blockingLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &853079414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853079403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5dfd6ec7579ae546bbe3b1fb61ed762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useAnimations: 0
+  peekDistance: 0.5
+  peekRotation: 15
+  peekSpeed: 8
+  spineBone: {fileID: 0}
+  spineLeanAngle: 10
+  useIK: 0
+  headTurnAngle: 25
+  handRaiseHeight: 0.3
 --- !u!1001 &854605602
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5132,14 +5286,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 853079406}
-  offset: {x: 0, y: 2, z: -2}
-  followSpeed: 10
-  rotationSpeed: 5
+  offset: {x: 0.15, y: 2.35, z: -4.8}
+  lookOffset: {x: 0, y: 1.55, z: 0.08}
+  followSpeed: 5.5
+  rotationSpeed: 5.5
+  yawFollowSpeed: 4
+  movementLookAhead: 0.35
+  sideLookAhead: 0.08
+  lookAheadResponse: 4.5
   normalFOV: 60
   peekFOV: 40
   peekZoomDistance: 3
   fovTransitionSpeed: 8
   peekCameraOffset: 1.5
+  peekLookOffset: 0.35
 --- !u!114 &890879833
 MonoBehaviour:
   m_ObjectHideFlags: 0

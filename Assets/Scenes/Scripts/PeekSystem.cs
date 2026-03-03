@@ -26,6 +26,7 @@ public class PeekSystem : MonoBehaviour
     private Animator animator;
     private Rigidbody rb;
     private BasicControlScript basicControl;
+    private WallPeek wallPeek;
     
     private float currentPeekAmount = 0f;
     private float targetPeekAmount = 0f;
@@ -70,6 +71,7 @@ public class PeekSystem : MonoBehaviour
         
         rb = GetComponent<Rigidbody>();
         basicControl = GetComponent<BasicControlScript>();
+        wallPeek = GetComponent<WallPeek>();
         
         // Get bone references if using humanoid
         if (animator.isHuman && useIK)
@@ -121,7 +123,7 @@ public class PeekSystem : MonoBehaviour
             {
                 peekDirection = 0;
             }
-            else
+            else if (CanPeekInDirection(-1))
             {
                 peekDirection = -1;
             }
@@ -133,10 +135,15 @@ public class PeekSystem : MonoBehaviour
             {
                 peekDirection = 0;
             }
-            else
+            else if (CanPeekInDirection(1))
             {
                 peekDirection = 1;
             }
+        }
+
+        if (peekDirection != 0 && !CanPeekInDirection(peekDirection))
+        {
+            peekDirection = 0;
         }
         
         qKeyWasPressed = qKeyPressed;
@@ -154,6 +161,26 @@ public class PeekSystem : MonoBehaviour
         {
             targetPeekAmount = 0f;
         }
+    }
+
+    bool CanPeekInDirection(int direction)
+    {
+        if (wallPeek == null)
+        {
+            return true;
+        }
+
+        if (direction < 0)
+        {
+            return wallPeek.CanPeekLeft;
+        }
+
+        if (direction > 0)
+        {
+            return wallPeek.CanPeekRight;
+        }
+
+        return false;
     }
 
     void UpdatePeek()

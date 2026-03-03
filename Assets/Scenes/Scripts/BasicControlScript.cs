@@ -1,24 +1,15 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 
 [RequireComponent(typeof(Animator), typeof(Rigidbody), typeof(CapsuleCollider))]
 [RequireComponent(typeof(CharacterInputController))]
 public class BasicControlScript : MonoBehaviour
 {
-    private Animator anim;	
+    private Animator anim;
     private Rigidbody rbody;
     private CharacterInputController cinput;
 
     public Transform cameraTransform;
-
-    private Transform leftFoot;
-    private Transform rightFoot;
-    
-    private FootstepSound footstepSound;
-    private float lastFootstepTime = 0f;
-    private float footstepCooldown = 0.3f;
 
     public float forwardMaxSpeed = 1f;
     public float turnMaxSpeed = 1f;
@@ -26,21 +17,43 @@ public class BasicControlScript : MonoBehaviour
     public float jumpableGroundNormalMaxAngle = 45f;
     public bool closeToJumpableGround;
 
+    [Header("Movement Smoothing")]
+    public float acceleration = 14f;
+    public float deceleration = 18f;
+    public float airControlMultiplier = 0.35f;
+    public float groundCheckDistance = 1.1f;
 
-    private int groundContactCount = 0;
+    private readonly HashSet<int> groundContacts = new HashSet<int>();
+    private Vector3 desiredPlanarVelocity;
+    private Vector3 currentPlanarVelocity;
+    private bool hasGroundSupport;
 
     public bool IsGrounded
     {
         get
         {
-            return groundContactCount > 0;
+            return groundContacts.Count > 0;
         }
     }
 
+    public bool HasGroundSupport
+    {
+        get
+        {
+            return hasGroundSupport;
+        }
+    }
+
+    public Vector3 CurrentPlanarVelocity
+    {
+        get
+        {
+            return currentPlanarVelocity;
+        }
+    }
 
     void Awake()
     {
-
         anim = GetComponent<Animator>();
 
         if (anim == null)
@@ -58,27 +71,17 @@ public class BasicControlScript : MonoBehaviour
 
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
-
     }
-
 
     void Start()
     {
-        leftFoot = this.transform.Find("mixamorig:Hips/mixamorig:LeftUpLeg/mixamorig:LeftLeg/mixamorig:LeftFoot");
-        rightFoot = this.transform.Find("mixamorig:Hips/mixamorig:RightUpLeg/mixamorig:RightLeg/mixamorig:RightFoot");
-
-        if (leftFoot == null || rightFoot == null)
-            Debug.Log("One of the feet could not be found");
-
         anim.applyRootMotion = false;
-
     }
 
-
-    void Update() {
-
-        float inputForward=0f;
-        float inputTurn=0f;
+    void Update()
+    {
+        float inputForward = 0f;
+        float inputTurn = 0f;
 
         if (cinput.enabled)
         {
@@ -86,63 +89,114 @@ public class BasicControlScript : MonoBehaviour
             inputTurn = cinput.Turn;
         }
 
-        bool isGrounded = IsGrounded || CharacterCommon.CheckGroundNear(this.transform.position, jumpableGroundNormalMaxAngle, 0.1f, 1f, out closeToJumpableGround);
+        Vector2 moveInput = Vector2.ClampMagnitude(new Vector2(inputTurn, inputForward), 1f);
+        Vector3 moveForward;
+        Vector3 moveRight;
 
-        Vector3 inputVector = new Vector3(inputTurn, 0f, inputForward);
-        inputVector = Vector3.ClampMagnitude(inputVector, 1f);
-
-        Vector3 moveDirection;
         if (cameraTransform != null)
         {
-            Vector3 cameraForward = cameraTransform.forward;
-            cameraForward.y = 0f;
-            cameraForward.Normalize();
-
-            Vector3 cameraRight = cameraTransform.right;
-            cameraRight.y = 0f;
-            cameraRight.Normalize();
-
-            moveDirection = (cameraForward * inputVector.z) + (cameraRight * inputVector.x);
+            moveForward = cameraTransform.forward;
+            moveRight = cameraTransform.right;
         }
         else
         {
-            moveDirection = inputVector;
+            moveForward = transform.forward;
+            moveRight = transform.right;
         }
 
-        moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
+        moveForward.y = 0f;
+        moveRight.y = 0f;
+        moveForward.Normalize();
+        moveRight.Normalize();
 
-        Vector3 move = moveDirection * Time.deltaTime * forwardMaxSpeed;
-        rbody.MovePosition(rbody.position + move);
+        desiredPlanarVelocity =
+            (moveForward * (moveInput.y * forwardMaxSpeed)) +
+            (moveRight * (moveInput.x * turnMaxSpeed));
 
-        if (moveDirection.sqrMagnitude > 0.0001f)
+        if (desiredPlanarVelocity.sqrMagnitude > 0.0001f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-            float maxStep = maxTurnDegreesPerSecond * Time.deltaTime;
-            Quaternion limitedRotation = Quaternion.RotateTowards(rbody.rotation, targetRotation, maxStep);
-            rbody.MoveRotation(limitedRotation);
+            desiredPlanarVelocity = Vector3.ClampMagnitude(desiredPlanarVelocity, Mathf.Max(forwardMaxSpeed, turnMaxSpeed));
         }
-
     }
 
+    void FixedUpdate()
+    {
+        UpdateGroundSupport();
 
+        float controlMultiplier = hasGroundSupport ? 1f : airControlMultiplier;
+        bool hasMoveInput = desiredPlanarVelocity.sqrMagnitude > 0.0001f;
+        float moveRate = hasMoveInput ? acceleration : deceleration;
+        float maxStep = moveRate * controlMultiplier * Time.fixedDeltaTime;
 
+        Vector3 rigidbodyVelocity = rbody.linearVelocity;
+        Vector3 planarVelocity = new Vector3(rigidbodyVelocity.x, 0f, rigidbodyVelocity.z);
+        Vector3 targetPlanarVelocity = desiredPlanarVelocity * controlMultiplier;
+
+        currentPlanarVelocity = Vector3.MoveTowards(planarVelocity, targetPlanarVelocity, maxStep);
+        rbody.linearVelocity = new Vector3(currentPlanarVelocity.x, rigidbodyVelocity.y, currentPlanarVelocity.z);
+
+        Vector3 facingDirection = hasMoveInput ? desiredPlanarVelocity : currentPlanarVelocity;
+        facingDirection.y = 0f;
+
+        if (facingDirection.sqrMagnitude > 0.0001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(facingDirection.normalized, Vector3.up);
+            float maxRotationStep = maxTurnDegreesPerSecond * Time.fixedDeltaTime;
+            Quaternion limitedRotation = Quaternion.RotateTowards(rbody.rotation, targetRotation, maxRotationStep);
+            rbody.MoveRotation(limitedRotation);
+        }
+    }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.gameObject.tag == "ground")
+        if (TryRegisterGroundCollision(collision))
         {
-            ++groundContactCount;
-            EventManager.TriggerEvent<PlayerLandsEvent, Vector3, float>(collision.contacts[0].point, collision.impulse.magnitude);
+            EventManager.TriggerEvent<PlayerLandsEvent, Vector3, float>(
+                collision.contacts[0].point,
+                collision.impulse.magnitude);
         }
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        TryRegisterGroundCollision(collision);
     }
 
     void OnCollisionExit(Collision collision)
     {
-        if (collision.transform.gameObject.tag == "ground")
-        {
-            --groundContactCount;
-
-        }
+        groundContacts.Remove(collision.collider.GetInstanceID());
     }
 
+    private void UpdateGroundSupport()
+    {
+        bool groundNear = CharacterCommon.CheckGroundNear(
+            transform.position,
+            jumpableGroundNormalMaxAngle,
+            0.15f,
+            groundCheckDistance,
+            out bool isCloseToGround);
+
+        closeToJumpableGround = isCloseToGround;
+        hasGroundSupport = IsGrounded || groundNear;
+    }
+
+    private bool TryRegisterGroundCollision(Collision collision)
+    {
+        if (collision.collider == null || collision.collider.isTrigger)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < collision.contactCount; ++i)
+        {
+            ContactPoint contact = collision.GetContact(i);
+            float surfaceAngle = Vector3.Angle(contact.normal, Vector3.up);
+            if (surfaceAngle <= jumpableGroundNormalMaxAngle)
+            {
+                return groundContacts.Add(collision.collider.GetInstanceID());
+            }
+        }
+
+        return false;
+    }
 }
