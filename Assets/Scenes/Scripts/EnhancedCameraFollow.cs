@@ -15,6 +15,12 @@ public class EnhancedCameraFollow : MonoBehaviour
     public float sideLookAhead = 0.4f;
     public float lookAheadResponse = 6f;
 
+    [Header("Camera Collision")]
+    public bool useCameraCollision = true;
+    public float collisionRadius = 0.2f;
+    public float collisionPadding = 0.1f;
+    public LayerMask collisionLayers = Physics.DefaultRaycastLayers;
+
     [Header("Peek Camera Settings")]
     public float normalFOV = 60f;
     public float peekFOV = 40f;
@@ -88,9 +94,6 @@ public class EnhancedCameraFollow : MonoBehaviour
         Quaternion targetYaw = Quaternion.Euler(0f, smoothedYaw, 0f);
         currentOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime * fovTransitionSpeed);
 
-        Vector3 desiredPosition = target.position + (targetYaw * currentOffset);
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * followSpeed);
-
         Vector3 desiredLookAhead = Vector3.zero;
         if (basicControl != null)
         {
@@ -110,7 +113,44 @@ public class EnhancedCameraFollow : MonoBehaviour
         smoothedLookAhead = Vector3.Lerp(smoothedLookAhead, desiredLookAhead, Time.deltaTime * lookAheadResponse);
 
         Vector3 lookTarget = target.position + lookOffset + smoothedLookAhead;
+        Vector3 desiredPosition = target.position + (targetYaw * currentOffset);
+        Vector3 resolvedPosition = ResolveCollisionPosition(lookTarget, desiredPosition);
+
+        transform.position = Vector3.Lerp(transform.position, resolvedPosition, Time.deltaTime * followSpeed);
         Quaternion targetRotation = Quaternion.LookRotation(lookTarget - transform.position, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    private Vector3 ResolveCollisionPosition(Vector3 lookTarget, Vector3 desiredPosition)
+    {
+        if (!useCameraCollision)
+        {
+            return desiredPosition;
+        }
+
+        Vector3 castVector = desiredPosition - lookTarget;
+        float castDistance = castVector.magnitude;
+        if (castDistance <= 0.001f)
+        {
+            return desiredPosition;
+        }
+
+        Vector3 castDirection = castVector / castDistance;
+        float radius = Mathf.Max(0.01f, collisionRadius);
+
+        if (Physics.SphereCast(
+            lookTarget,
+            radius,
+            castDirection,
+            out RaycastHit hit,
+            castDistance,
+            collisionLayers,
+            QueryTriggerInteraction.Ignore))
+        {
+            float safeDistance = Mathf.Max(0.05f, hit.distance - collisionPadding);
+            return lookTarget + (castDirection * safeDistance);
+        }
+
+        return desiredPosition;
     }
 }
