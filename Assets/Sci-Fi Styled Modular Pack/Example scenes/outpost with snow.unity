@@ -5294,6 +5294,12 @@ MonoBehaviour:
   movementLookAhead: 0.35
   sideLookAhead: 0.08
   lookAheadResponse: 4.5
+  useCameraCollision: 1
+  collisionRadius: 0.2
+  collisionPadding: 0.1
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 51
   normalFOV: 60
   peekFOV: 40
   peekZoomDistance: 3
@@ -14901,6 +14907,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 853079407}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 853079412}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 853079411}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 853079413}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 853079414}
   m_SourcePrefab: {fileID: 100100000, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
 --- !u!1001 &1820350576
 PrefabInstance:
