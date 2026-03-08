@@ -1,0 +1,12 @@
+Guard NPC setup
+- Add GameManager to the scene (empty GameObject + GameManager.cs). Optional: use a prefab so it persists.
+- Player: add PlayerNoiseEmitter.cs. Ensure CharacterInputController is on the same object.
+- Guard: add NavMeshAgent + GuardAI.cs. Bake NavMesh on your level. Assign: Patrol Points (empty Transforms in hallway), Player (player Transform), Vision Blockers (layer mask for walls/doors). Tune in Inspector: walkSpeed, runSpeed, baseHearingRadius, investigateWaitTime, viewDistance, fovDegrees, catchDistance.
+- Patrol points: create empty GameObjects along the hallway path; assign the array in GuardAI. Guard walks first-to-last then last-to-first.
+- Vision: assign a layer to obstacles (e.g. create layer "VisionBlockers"), set those objects to that layer, set GuardAI Vision Blockers to that layer.
+
+Verification checklist
+[ ] Patrol: guard walks waypoints back and forth.
+[ ] Noise: player walks/runs near guard; guard goes to noise position, waits, then returns to patrol.
+[ ] Chase: guard sees player (in FOV, no wall in between); guard runs at player.
+[ ] Catch: when guard gets within catch distance, scene reloads (lose).
