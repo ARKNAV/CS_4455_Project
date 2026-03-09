@@ -65,23 +65,25 @@ public class CharacterInputController : MonoBehaviour {
     float h = 0f;
     float v = 0f;
 
-#if ENABLE_INPUT_SYSTEM
-    if (Keyboard.current != null)
-    {
-        h = (Keyboard.current.dKey.isPressed ? 1f : 0f) + (Keyboard.current.aKey.isPressed ? -1f : 0f);
-        v = (Keyboard.current.wKey.isPressed ? 1f : 0f) + (Keyboard.current.sKey.isPressed ? -1f : 0f);
-        Jump = Keyboard.current.spaceKey.wasPressedThisFrame;
-        
-        isCrouching = Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.cKey.isPressed;
-    }
-#else
+	#if ENABLE_INPUT_SYSTEM
+	    if (Keyboard.current != null)
+	    {
+	        h = (Keyboard.current.dKey.isPressed ? 1f : 0f) + (Keyboard.current.aKey.isPressed ? -1f : 0f);
+	        v = (Keyboard.current.wKey.isPressed ? 1f : 0f) + (Keyboard.current.sKey.isPressed ? -1f : 0f);
+	        Jump = Keyboard.current.spaceKey.wasPressedThisFrame;
+	        Action = Keyboard.current != null && (Keyboard.current.digit1Key.wasPressedThisFrame);
+	        
+	        isCrouching = Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.cKey.isPressed;
+	    }
+	#else
     
-    h = Input.GetAxisRaw("Horizontal");
-    v = Input.GetAxisRaw("Vertical");
-    Jump = Input.GetButtonDown("Jump");
-    
-    isCrouching = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C);
-#endif
+	    h = Input.GetAxisRaw("Horizontal");
+	    v = Input.GetAxisRaw("Vertical");
+	    Jump = Input.GetButtonDown("Jump");
+	    Action = Input.GetKeyDown(KeyCode.Alpha1);
+	    
+	    isCrouching = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C);
+	#endif
 
 
         if (InputMapToCircular)

@@ -17,13 +17,11 @@ public class FootstepSound : MonoBehaviour
     // THIS FUNCTION will be called by the animation
     public void EmitFootstep()
     {
-        Debug.Log("EmitFootstep() called!");
         if(source != null)
         {
             if(source.clip != null)
             {
                 source.PlayOneShot(source.clip);
-                Debug.Log("Playing footstep sound: " + source.clip.name);
             }
             else
             {
