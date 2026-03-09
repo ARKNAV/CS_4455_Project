@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 
 public enum GuardState
 {
@@ -149,7 +148,11 @@ public class GuardAI : MonoBehaviour
                     {
                         if (patrolPoints[i] == null) continue;
                         float d = Vector3.Distance(transform.position, patrolPoints[i].position);
-                        if (d < best) { best = d; idx = i; }
+                        if (d < best)
+                        {
+                            best = d;
+                            idx = i;
+                        }
                     }
                     _patrolIndex = idx;
                     _patrolForward = true;
@@ -166,10 +169,7 @@ public class GuardAI : MonoBehaviour
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= catchDistance)
         {
-            if (GameManager.Instance != null)
-                GameManager.TriggerLose();
-            else
-                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+            GameManager.TriggerLose();
         }
     }
 
@@ -198,7 +198,6 @@ public class GuardAI : MonoBehaviour
 
     private void EvaluateDisguiseOrSuspicion()
     {
-        # need to first have a working disguise system in place before we can implement this
     }
 
     private void SetDestination(Vector3 worldPosition)
