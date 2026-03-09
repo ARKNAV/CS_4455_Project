@@ -1,4 +1,7 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 [RequireComponent(typeof(CharacterInputController))]
 public class PlayerNoiseEmitter : MonoBehaviour
@@ -40,11 +43,10 @@ public class PlayerNoiseEmitter : MonoBehaviour
 
     private static bool IsRunHeld()
     {
-#if ENABLE_INPUT_SYSTEM
-        return UnityEngine.InputSystem.Keyboard.current != null &&
-               UnityEngine.InputSystem.Keyboard.current.leftShiftKey.isPressed;
-#else
-        return Input.GetKey(KeyCode.LeftShift);
-#endif
+    #if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed;
+    #else
+            return Input.GetKey(KeyCode.LeftShift);
+    #endif
     }
 }
