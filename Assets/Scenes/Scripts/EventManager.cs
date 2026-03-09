@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public struct PlayerLandsEvent { }
-public struct NoiseEmittedEvent { }
 
 public static class EventManager
 {
