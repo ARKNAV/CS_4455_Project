@@ -17,7 +17,6 @@ public class BasicControlScript : MonoBehaviour
     public float jumpableGroundNormalMaxAngle = 45f;
     public bool closeToJumpableGround;
 
-    [Header("Movement Smoothing")]
     public float acceleration = 14f;
     public float deceleration = 18f;
     public float airControlMultiplier = 0.35f;
@@ -55,19 +54,8 @@ public class BasicControlScript : MonoBehaviour
     void Awake()
     {
         anim = GetComponent<Animator>();
-
-        if (anim == null)
-            Debug.Log("Animator could not be found");
-
         rbody = GetComponent<Rigidbody>();
-
-        if (rbody == null)
-            Debug.Log("Rigid body could not be found");
-
         cinput = GetComponent<CharacterInputController>();
-
-        if (cinput == null)
-            Debug.Log("CharacterInputController could not be found");
 
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
@@ -109,13 +97,28 @@ public class BasicControlScript : MonoBehaviour
         moveForward.Normalize();
         moveRight.Normalize();
 
+        float effectiveForwardSpeed = forwardMaxSpeed;
+        float effectiveTurnSpeed = turnMaxSpeed;
+
+        if (cinput.IsSprinting)
+        {
+            effectiveForwardSpeed *= cinput.sprintSpeedMultiplier;
+            effectiveTurnSpeed *= cinput.sprintSpeedMultiplier;
+        }
+
         desiredPlanarVelocity =
-            (moveForward * (moveInput.y * forwardMaxSpeed)) +
-            (moveRight * (moveInput.x * turnMaxSpeed));
+            (moveForward * (moveInput.y * effectiveForwardSpeed)) +
+            (moveRight * (moveInput.x * effectiveTurnSpeed));
 
         if (desiredPlanarVelocity.sqrMagnitude > 0.0001f)
         {
-            desiredPlanarVelocity = Vector3.ClampMagnitude(desiredPlanarVelocity, Mathf.Max(forwardMaxSpeed, turnMaxSpeed));
+            desiredPlanarVelocity = Vector3.ClampMagnitude(desiredPlanarVelocity, Mathf.Max(effectiveForwardSpeed, effectiveTurnSpeed));
+        }
+
+        if (cinput.Jump && hasGroundSupport)
+        {
+            rbody.linearVelocity = new Vector3(rbody.linearVelocity.x, 0f, rbody.linearVelocity.z);
+            rbody.AddForce(Vector3.up * 7f, ForceMode.Impulse);
         }
     }
 
@@ -126,13 +129,21 @@ public class BasicControlScript : MonoBehaviour
         float controlMultiplier = hasGroundSupport ? 1f : airControlMultiplier;
         bool hasMoveInput = desiredPlanarVelocity.sqrMagnitude > 0.0001f;
         float moveRate = hasMoveInput ? acceleration : deceleration;
-        float maxStep = moveRate * controlMultiplier * Time.fixedDeltaTime;
+        float dragCompensation = 1f + rbody.linearDamping * Time.fixedDeltaTime;
+        float maxStep = moveRate * controlMultiplier * Time.fixedDeltaTime * dragCompensation;
 
         Vector3 rigidbodyVelocity = rbody.linearVelocity;
         Vector3 planarVelocity = new Vector3(rigidbodyVelocity.x, 0f, rigidbodyVelocity.z);
         Vector3 targetPlanarVelocity = desiredPlanarVelocity * controlMultiplier;
 
-        currentPlanarVelocity = Vector3.MoveTowards(planarVelocity, targetPlanarVelocity, maxStep);
+        if (cinput.IsSprinting)
+        {
+            currentPlanarVelocity = Vector3.Lerp(planarVelocity, targetPlanarVelocity, 0.3f);
+        }
+        else
+        {
+            currentPlanarVelocity = Vector3.MoveTowards(planarVelocity, targetPlanarVelocity, maxStep);
+        }
         rbody.linearVelocity = new Vector3(currentPlanarVelocity.x, rigidbodyVelocity.y, currentPlanarVelocity.z);
 
         Vector3 facingDirection = hasMoveInput ? desiredPlanarVelocity : currentPlanarVelocity;
