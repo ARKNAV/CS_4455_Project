@@ -31,7 +31,7 @@ public class PlayerNoiseEmitter : MonoBehaviour
         _nextEmitTime = Time.time + emissionInterval;
 
         bool isCrouching = _cinput.IsCrouching;
-        bool isRunning = IsRunHeld();
+        bool isRunning = _cinput.IsSprinting;
         float radius = baseNoiseRadius;
         if (isCrouching)
             radius *= crouchNoiseMultiplier;
@@ -41,12 +41,4 @@ public class PlayerNoiseEmitter : MonoBehaviour
         EventManager.TriggerEvent<NoiseEmittedEvent, Vector3, float>(transform.position, radius);
     }
 
-    private static bool IsRunHeld()
-    {
-    #if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed;
-    #else
-            return Input.GetKey(KeyCode.LeftShift);
-    #endif
-    }
 }
