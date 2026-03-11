@@ -56,6 +56,16 @@ public class GuardAI : MonoBehaviour
 
     void Start()
     {
+        if (!_agent.isOnNavMesh)
+        {
+            Debug.LogWarning("GuardAI: NavMeshAgent is not on a NavMesh. Reposition the guard onto baked walkable area.", this);
+        }
+
+        if (patrolPoints == null || patrolPoints.Length == 0)
+        {
+            Debug.LogWarning("GuardAI: No patrol points assigned. Guard will stay idle unless it hears noise or sees player.", this);
+        }
+
         _agent.speed = walkSpeed;
         if (patrolPoints != null && patrolPoints.Length > 0)
         {
@@ -66,8 +76,6 @@ public class GuardAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
-
         switch (_state)
         {
             case GuardState.Patrol:
@@ -81,7 +89,7 @@ public class GuardAI : MonoBehaviour
                 break;
         }
 
-        if (CanSeePlayer())
+            if (player != null && CanSeePlayer())
         {
             EvaluateDisguiseOrSuspicion();
             _state = GuardState.Chase;
