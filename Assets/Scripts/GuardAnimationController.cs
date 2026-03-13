@@ -18,6 +18,7 @@ public class GuardAnimatorController : MonoBehaviour
     void Update()
     {
         float speed = agent.velocity.magnitude;
+        Debug.Log("Speed: " + speed);
         animator.SetFloat(speedParam, speed);
     }
 }

@@ -11453,6 +11453,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 297525402}
+  - component: {fileID: 297525405}
+  - component: {fileID: 297525406}
   m_Layer: 0
   m_Name: NPC_Level1
   m_TagString: Untagged
@@ -11477,6 +11479,54 @@ Transform:
   - {fileID: 622688653}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &297525405
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297525401}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &297525406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297525401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa678172e389549d1bd47dafac69a562, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  patrolPoints:
+  - {fileID: 1644381538}
+  - {fileID: 828612763}
+  walkSpeed: 1.5
+  baseHearingRadius: 12
+  investigateWaitTime: 2
+  player: {fileID: 0}
+  viewDistance: 10
+  fovDegrees: 90
+  visionBlockers:
+    serializedVersion: 2
+    m_Bits: 51
+  runSpeed: 4
+  catchDistance: 1.5
 --- !u!4 &297560775 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 497032, guid: b38a3290156af5046a449900e3163984, type: 3}
@@ -42535,8 +42585,8 @@ MonoBehaviour:
   requireObjective: 0
   requiredObjectiveId: exit
   completeObjectiveOnOpen: 1
-  requireReaderUnlock: 1
-  requiredReader: {fileID: 2137007314}
+  requireReaderUnlock: 0
+  requiredReader: {fileID: 0}
 --- !u!65 &1143056868
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -57310,6 +57360,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1950768912}
+    - targetCorrespondingSourceObject: {fileID: 100154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1950768914}
   m_SourcePrefab: {fileID: 100100000, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
 --- !u!4 &1524622517 stripped
 Transform:
@@ -72908,6 +72961,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &1950768914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950768907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bff060d8aec3841448535281fff33b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedParam: speed
 --- !u!4 &1952752681 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
