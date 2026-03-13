@@ -32,5 +32,11 @@ public class FootstepSound : MonoBehaviour
         {
             Debug.LogError("AudioSource is null!");
         }
+
+        var emitter = GetComponent<PlayerNoiseEmitter>();
+        if (emitter != null)
+        {
+            emitter.EmitFootstepNoise();
+        }
     }
 }

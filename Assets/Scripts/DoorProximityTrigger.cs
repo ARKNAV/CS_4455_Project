@@ -6,6 +6,13 @@ public class DoorProximityTrigger : MonoBehaviour
     public Animator doorAnimator;
     public string openParameter = "character_nearby";
     public string playerTag = "Player";
+    [Header("Objective Gate (Optional)")]
+    public bool requireObjective = false;
+    public string requiredObjectiveId = "exit";
+    public bool completeObjectiveOnOpen = true;
+    [Header("Access Control (Optional)")]
+    public bool requireReaderUnlock = false;
+    public KeycardReaderController requiredReader;
 
     private int openParameterHash;
 
@@ -35,6 +42,28 @@ public class DoorProximityTrigger : MonoBehaviour
         if (!other.CompareTag(playerTag) || doorAnimator == null)
         {
             return;
+        }
+
+        if (requireObjective)
+        {
+            DemoObjectiveManager manager = DemoObjectiveManager.Instance;
+            if (manager == null || !manager.IsCurrentObjective(requiredObjectiveId))
+            {
+                return;
+            }
+
+            if (completeObjectiveOnOpen)
+            {
+                manager.CompleteObjective(requiredObjectiveId);
+            }
+        }
+
+        if (requireReaderUnlock)
+        {
+            if (requiredReader == null || !requiredReader.IsUnlocked)
+            {
+                return;
+            }
         }
 
         if (!HasOpenParameter())

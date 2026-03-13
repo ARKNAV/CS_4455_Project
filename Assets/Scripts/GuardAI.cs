@@ -12,7 +12,7 @@ public class GuardAI : MonoBehaviour
 {
     [Header("Patrol")]
     [SerializeField] Transform[] patrolPoints;
-    [SerializeField] float walkSpeed = 2f;
+    [SerializeField] float walkSpeed = 1.5f;
 
     [Header("Hearing")]
     [SerializeField] float baseHearingRadius = 12f;
@@ -27,7 +27,7 @@ public class GuardAI : MonoBehaviour
     [SerializeField] LayerMask visionBlockers = Physics.DefaultRaycastLayers;
 
     [Header("Chase")]
-    [SerializeField] float runSpeed = 5f;
+    [SerializeField] float runSpeed = 4f;
     [SerializeField] float catchDistance = 1.5f;
 
     private NavMeshAgent _agent;
@@ -56,6 +56,18 @@ public class GuardAI : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("Guard isOnNavMesh=" + _agent.isOnNavMesh, this);
+
+        if (!_agent.isOnNavMesh)
+        {
+            Debug.LogWarning("GuardAI: NavMeshAgent is not on a NavMesh. Reposition the guard onto baked walkable area.", this);
+        }
+
+        if (patrolPoints == null || patrolPoints.Length == 0)
+        {
+            Debug.LogWarning("GuardAI: No patrol points assigned. Guard will stay idle unless it hears noise or sees player.", this);
+        }
+
         _agent.speed = walkSpeed;
         if (patrolPoints != null && patrolPoints.Length > 0)
         {
@@ -66,8 +78,6 @@ public class GuardAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
-
         switch (_state)
         {
             case GuardState.Patrol:
@@ -81,10 +91,11 @@ public class GuardAI : MonoBehaviour
                 break;
         }
 
-        if (CanSeePlayer())
+        if (player != null && CanSeePlayer())
         {
             EvaluateDisguiseOrSuspicion();
             _state = GuardState.Chase;
+            Debug.Log("GuardAI state -> Chase", this);
             _agent.speed = runSpeed;
             SetDestination(player.position);
         }
@@ -92,11 +103,14 @@ public class GuardAI : MonoBehaviour
 
     private void OnNoiseHeard(Vector3 position, float noiseRadius)
     {
+        Debug.Log("GuardAI OnNoiseHeard pos=" + position + " radius=" + noiseRadius, this);
+
         if (_state == GuardState.Chase) return;
         float dist = Vector3.Distance(transform.position, position);
         if (dist > baseHearingRadius || dist > noiseRadius) return;
         _investigateTarget = position;
         _state = GuardState.Investigate;
+        Debug.Log("GuardAI state -> Investigate", this);
         _agent.speed = walkSpeed;
         SetDestination(position);
     }
@@ -143,6 +157,7 @@ public class GuardAI : MonoBehaviour
             {
                 _investigateWaitUntil = 0f;
                 _state = GuardState.Patrol;
+                Debug.Log("GuardAI state -> Patrol", this);
                 _agent.speed = walkSpeed;
                 if (patrolPoints != null && patrolPoints.Length > 0)
                 {
@@ -169,7 +184,37 @@ public class GuardAI : MonoBehaviour
     private void UpdateChase()
     {
         if (player == null) return;
-        SetDestination(player.position);
+
+        if (!_agent.isOnNavMesh)
+        {
+            Debug.LogWarning("GuardAI Chase: NavMeshAgent is not on NavMesh.", this);
+            return;
+        }
+
+        if (!_agent.enabled || _agent.isStopped)
+        {
+            Debug.LogWarning("GuardAI Chase: NavMeshAgent is disabled or stopped.", this);
+            return;
+        }
+
+        Vector3 target = player.position;
+        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            target = hit.position;
+        }
+        else
+        {
+            Debug.LogWarning("GuardAI Chase: could not find NavMesh near player position.", this);
+            return;
+        }
+
+        _agent.speed = runSpeed;
+        _agent.SetDestination(target);
+        if (!_agent.hasPath)
+        {
+            Debug.LogWarning("GuardAI Chase: no path to player.", this);
+        }
+
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= catchDistance)
         {
