@@ -86,7 +86,7 @@ public class GuardAI : MonoBehaviour
             EvaluateDisguiseOrSuspicion();
             _state = GuardState.Chase;
             _agent.speed = runSpeed;
-            _agent.SetDestination(player.position);
+            SetDestination(player.position);
         }
     }
 
@@ -98,12 +98,14 @@ public class GuardAI : MonoBehaviour
         _investigateTarget = position;
         _state = GuardState.Investigate;
         _agent.speed = walkSpeed;
-        _agent.SetDestination(position);
+        SetDestination(position);
     }
 
     private void UpdatePatrol()
     {
         if (patrolPoints == null || patrolPoints.Length == 0) return;
+        if (!CanQueryAgentPath()) return;
+
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             if (_patrolForward)
@@ -131,6 +133,8 @@ public class GuardAI : MonoBehaviour
 
     private void UpdateInvestigate()
     {
+        if (!CanQueryAgentPath()) return;
+
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             if (_investigateWaitUntil <= 0f)
@@ -165,7 +169,7 @@ public class GuardAI : MonoBehaviour
     private void UpdateChase()
     {
         if (player == null) return;
-        _agent.SetDestination(player.position);
+        SetDestination(player.position);
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= catchDistance)
         {
@@ -202,7 +206,12 @@ public class GuardAI : MonoBehaviour
 
     private void SetDestination(Vector3 worldPosition)
     {
-        if (_agent.isOnNavMesh)
+        if (_agent != null && _agent.isOnNavMesh)
             _agent.SetDestination(worldPosition);
+    }
+
+    private bool CanQueryAgentPath()
+    {
+        return _agent != null && _agent.enabled && _agent.isOnNavMesh;
     }
 }
