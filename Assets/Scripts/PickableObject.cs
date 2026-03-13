@@ -4,7 +4,8 @@
 public class PickableObject : MonoBehaviour
 {
     private Rigidbody rb;
-
+    public bool winTrigger = false;
+    public CanvasGroup winCanvas;
     public bool IsHeld { get; private set; }
 
     public Rigidbody Rigidbody
@@ -24,6 +25,13 @@ public class PickableObject : MonoBehaviour
 
     public void OnPickedUp()
     {
+        if (winTrigger && winCanvas != null)
+        {
+            winCanvas.interactable = true;
+            winCanvas.blocksRaycasts = true;
+            winCanvas.alpha = 1f;
+            Time.timeScale = 0f;
+        }
         IsHeld = true;
     }
 
