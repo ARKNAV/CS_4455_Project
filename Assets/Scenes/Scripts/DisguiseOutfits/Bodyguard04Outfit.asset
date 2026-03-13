@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01104fab942934e4dafa36b65ce8ed29, type: 3}
+  m_Name: Bodyguard04Outfit
+  m_EditorClassIdentifier: 
+  shirtMaterial: {fileID: 2100000, guid: 1c568156d9d473c42a9182ac94535a12, type: 2}
+  tshirtMaterial: {fileID: 2100000, guid: 1c568156d9d473c42a9182ac94535a12, type: 2}

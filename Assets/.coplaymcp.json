@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "coplay-mcp": {
+      "command": "uvx",
+      "args": ["coplay-mcp-server@latest"]
+    }
+  }
+}

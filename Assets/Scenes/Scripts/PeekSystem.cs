@@ -43,6 +43,8 @@ public class PeekSystem : MonoBehaviour
     private bool qKeyWasPressed = false;
     private bool eKeyPressed = false;
     private bool eKeyWasPressed = false;
+
+    private bool CanDriveAnimator => animator != null && animator.runtimeAnimatorController != null;
     
     public bool IsPeeking
     {
@@ -187,7 +189,7 @@ public class PeekSystem : MonoBehaviour
     {
         currentPeekAmount = Mathf.Lerp(currentPeekAmount, targetPeekAmount, Time.deltaTime * peekSpeed);
         
-        if (useAnimations && animator != null)
+        if (useAnimations && CanDriveAnimator)
         {
             animator.SetInteger("PeekDirection", peekDirection);
             animator.SetBool("IsPeeking", peekDirection != 0);
@@ -201,7 +203,7 @@ public class PeekSystem : MonoBehaviour
 
     void OnDisable()
     {
-        if (animator != null)
+        if (CanDriveAnimator)
         {
             animator.SetInteger("PeekDirection", 0);
             animator.SetBool("IsPeeking", false);
@@ -221,7 +223,7 @@ public class PeekSystem : MonoBehaviour
     
     void LateUpdate()
     {
-        if (!useIK || !animator.isHuman) return;
+        if (!useIK || animator == null || !animator.isHuman) return;
         
         // Apply IK to head and hands after animation
         float ikWeight = Mathf.Abs(currentPeekAmount);
