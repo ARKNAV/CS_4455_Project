@@ -97,7 +97,7 @@ public class GuardAI : MonoBehaviour
             _state = GuardState.Chase;
             Debug.Log("GuardAI state -> Chase", this);
             _agent.speed = runSpeed;
-            _agent.SetDestination(player.position);
+            SetDestination(player.position);
         }
     }
 
@@ -112,12 +112,14 @@ public class GuardAI : MonoBehaviour
         _state = GuardState.Investigate;
         Debug.Log("GuardAI state -> Investigate", this);
         _agent.speed = walkSpeed;
-        _agent.SetDestination(position);
+        SetDestination(position);
     }
 
     private void UpdatePatrol()
     {
         if (patrolPoints == null || patrolPoints.Length == 0) return;
+        if (!CanQueryAgentPath()) return;
+
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             if (_patrolForward)
@@ -145,6 +147,8 @@ public class GuardAI : MonoBehaviour
 
     private void UpdateInvestigate()
     {
+        if (!CanQueryAgentPath()) return;
+
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             if (_investigateWaitUntil <= 0f)
@@ -180,37 +184,7 @@ public class GuardAI : MonoBehaviour
     private void UpdateChase()
     {
         if (player == null) return;
-
-        if (!_agent.isOnNavMesh)
-        {
-            Debug.LogWarning("GuardAI Chase: NavMeshAgent is not on NavMesh.", this);
-            return;
-        }
-
-        if (!_agent.enabled || _agent.isStopped)
-        {
-            Debug.LogWarning("GuardAI Chase: NavMeshAgent is disabled or stopped.", this);
-            return;
-        }
-
-        Vector3 target = player.position;
-        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            target = hit.position;
-        }
-        else
-        {
-            Debug.LogWarning("GuardAI Chase: could not find NavMesh near player position.", this);
-            return;
-        }
-
-        _agent.speed = runSpeed;
-        _agent.SetDestination(target);
-        if (!_agent.hasPath)
-        {
-            Debug.LogWarning("GuardAI Chase: no path to player.", this);
-        }
-
+        SetDestination(player.position);
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= catchDistance)
         {
@@ -247,7 +221,12 @@ public class GuardAI : MonoBehaviour
 
     private void SetDestination(Vector3 worldPosition)
     {
-        if (_agent.isOnNavMesh)
+        if (_agent != null && _agent.isOnNavMesh)
             _agent.SetDestination(worldPosition);
+    }
+
+    private bool CanQueryAgentPath()
+    {
+        return _agent != null && _agent.enabled && _agent.isOnNavMesh;
     }
 }

@@ -179,7 +179,7 @@ public class CharacterInputController : MonoBehaviour {
         Forward = outputForward;
         Turn = outputTurn;
 
-        if (animator != null)
+        if (animator != null && animator.runtimeAnimatorController != null)
         {
             Vector2 moveVector = new Vector2(h, v);
             moveVector = Vector2.ClampMagnitude(moveVector, 1f);

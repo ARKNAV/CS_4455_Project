@@ -1,16 +1,20 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Drives the sprint bar fill inside the unified StatusPanel.
+/// Scales the fill RectTransform and optionally updates a percentage label.
+/// </summary>
 public class SprintBarUI : MonoBehaviour
 {
     public CharacterInputController inputController;
     public RectTransform fillBar;
+    public Text valueLabel;
 
     [Header("Fade Settings")]
     public bool autoFade = true;
     public float fadeSpeed = 3f;
 
-    private Image fillImage;
     private CanvasGroup canvasGroup;
 
     void Start()
@@ -18,11 +22,8 @@ public class SprintBarUI : MonoBehaviour
         if (inputController == null)
             inputController = FindFirstObjectByType<CharacterInputController>();
 
-        if (fillBar != null)
-            fillImage = fillBar.GetComponent<Image>();
-
         canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
+        if (autoFade && canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
     }
 
@@ -30,8 +31,7 @@ public class SprintBarUI : MonoBehaviour
     {
         if (inputController == null) return;
 
-        float ratio = inputController.CurrentStamina / inputController.MaxStamina;
-        ratio = Mathf.Clamp01(ratio);
+        float ratio = Mathf.Clamp01(inputController.CurrentStamina / inputController.MaxStamina);
 
         if (fillBar != null)
         {
@@ -40,14 +40,9 @@ public class SprintBarUI : MonoBehaviour
             fillBar.localScale = scale;
         }
 
-        if (fillImage != null)
+        if (valueLabel != null)
         {
-            if (ratio < 0.01f)
-                fillImage.color = new Color(0.9f, 0.1f, 0.1f, 1f);
-            else if (ratio < 0.25f)
-                fillImage.color = Color.Lerp(new Color(0.9f, 0.1f, 0.1f, 1f), new Color(1f, 0.6f, 0f, 1f), ratio / 0.25f);
-            else
-                fillImage.color = new Color(0.2f, 0.7f, 1f, 1f);
+            valueLabel.text = $"{Mathf.RoundToInt(ratio * 100)}%";
         }
 
         if (autoFade && canvasGroup != null)
