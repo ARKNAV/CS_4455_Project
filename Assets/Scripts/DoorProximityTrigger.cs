@@ -10,6 +10,9 @@ public class DoorProximityTrigger : MonoBehaviour
     public bool requireObjective = false;
     public string requiredObjectiveId = "exit";
     public bool completeObjectiveOnOpen = true;
+    [Header("Access Control (Optional)")]
+    public bool requireReaderUnlock = false;
+    public KeycardReaderController requiredReader;
 
     private int openParameterHash;
 
@@ -52,6 +55,14 @@ public class DoorProximityTrigger : MonoBehaviour
             if (completeObjectiveOnOpen)
             {
                 manager.CompleteObjective(requiredObjectiveId);
+            }
+        }
+
+        if (requireReaderUnlock)
+        {
+            if (requiredReader == null || !requiredReader.IsUnlocked)
+            {
+                return;
             }
         }
 

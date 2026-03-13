@@ -99,12 +99,12 @@ public class DemoObjectiveManager : MonoBehaviour
 
         if (objectiveTextTMP == null)
         {
-            objectiveTextTMP = FindObjectOfType<TMP_Text>();
+            objectiveTextTMP = FindFirstObjectByType<TMP_Text>();
         }
 
         if (objectiveTextLegacy == null)
         {
-            objectiveTextLegacy = FindObjectOfType<Text>();
+            objectiveTextLegacy = FindFirstObjectByType<Text>();
         }
 
         if (!HasManualHudReference() && createHudAtRuntime)
@@ -175,18 +175,18 @@ public class DemoObjectiveManager : MonoBehaviour
     {
         if (playerInput == null)
         {
-            playerInput = FindObjectOfType<CharacterInputController>();
+            playerInput = FindFirstObjectByType<CharacterInputController>();
         }
 
         if (playerPeek == null)
         {
-            playerPeek = FindObjectOfType<PeekSystem>();
+            playerPeek = FindFirstObjectByType<PeekSystem>();
         }
     }
 
     private void EnsureHud()
     {
-        hudCanvas = FindObjectOfType<Canvas>();
+        hudCanvas = FindFirstObjectByType<Canvas>();
 
         if (hudCanvas == null)
         {
