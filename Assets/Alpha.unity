@@ -30050,7 +30050,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.033333335
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: b13dd785324c848a0a75920a7e39e6fb, type: 2}
   m_BuildHeightMesh: 0
@@ -57036,7 +57036,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.19017506
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -57070,6 +57070,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 064652554ff344b88be3be94a8d486db, type: 2}
+    - target: {fileID: 9500000, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -57083,6 +57095,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1950768912}
+    - targetCorrespondingSourceObject: {fileID: 100154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1950768915}
   m_SourcePrefab: {fileID: 100100000, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
 --- !u!4 &1524622517 stripped
 Transform:
@@ -60417,6 +60432,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 66678667}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 66678680}
     - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 66678680}
@@ -72540,7 +72558,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -72568,14 +72586,14 @@ MonoBehaviour:
   - {fileID: 1644381538}
   - {fileID: 828612763}
   walkSpeed: 2
-  baseHearingRadius: 12
+  baseHearingRadius: 10
   investigateWaitTime: 2
   player: {fileID: 66678677}
-  viewDistance: 10
+  viewDistance: 100
   fovDegrees: 90
   visionBlockers:
     serializedVersion: 2
-    m_Bits: 51
+    m_Bits: 4294967295
   runSpeed: 5
   catchDistance: 1.5
 --- !u!4 &1950768911 stripped
