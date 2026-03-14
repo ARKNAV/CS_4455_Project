@@ -3816,6 +3816,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasKeycard: 0
+--- !u!114 &66678682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66678666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e225ca980bac9b2409a5d2ecc580e06b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentOutfit: {fileID: 0}
+  disguiseDuration: 2.5
+  currentClearance: 0
+  loiterSuspicionRate: 8
+  loiterCheckRadius: 5
+  loiterGracePeriod: 3
+  currentSuspicion: 0
+  suspicionDecayRate: 5
+  suspicionDecayDelay: 2
 --- !u!4 &67408659 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
@@ -4711,11 +4732,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c1d3f39901e89340b7cc1e8f753cf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneName: Security Transit
-  requiredClearance: 1
-  suspicionRatePerSecond: 12
-  sprintSuspicionRate: 20
-  immediateInvestigation: 0
 --- !u!65 &93925062
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -18319,8 +18335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9968bd97c4d8d504bacf733dbfa224ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedParam: Speed
-  damping: 8
 --- !u!114 &434854493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18337,7 +18351,7 @@ MonoBehaviour:
   - {fileID: 2008748426}
   - {fileID: 1611965730}
   - {fileID: 598757076}
-  - {fileID: 1196606550}
+  - {fileID: 0}
   walkSpeed: 2
   baseHearingRadius: 15
   investigateWaitTime: 3
@@ -34416,11 +34430,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c1d3f39901e89340b7cc1e8f753cf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneName: Commander's Command Core
-  requiredClearance: 3
-  suspicionRatePerSecond: 20
-  sprintSuspicionRate: 20
-  immediateInvestigation: 1
 --- !u!65 &834650758
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -50623,8 +50632,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9968bd97c4d8d504bacf733dbfa224ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedParam: Speed
-  damping: 8
 --- !u!114 &1247200010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54108,8 +54115,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9968bd97c4d8d504bacf733dbfa224ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedParam: Speed
-  damping: 8
 --- !u!114 &1317781558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57896,11 +57901,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c1d3f39901e89340b7cc1e8f753cf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneName: Docking Bay
-  requiredClearance: 0
-  suspicionRatePerSecond: 5
-  sprintSuspicionRate: 20
-  immediateInvestigation: 0
 --- !u!65 &1410832414
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -65877,6 +65877,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 66678680}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 66678682}
   m_SourcePrefab: {fileID: 100100000, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
 --- !u!1 &1611965729
 GameObject:
@@ -68521,7 +68524,6 @@ Transform:
   - {fileID: 2008748426}
   - {fileID: 1611965730}
   - {fileID: 598757076}
-  - {fileID: 1196606550}
   m_Father: {fileID: 434854497}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1682946444
@@ -71891,13 +71893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8791675452133604aa6558492ee0dac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disguiseSystem: {fileID: 66678678}
-  suspicionFill: {fileID: 1615287484}
-  suspicionFillImage: {fileID: 1615287485}
-  clearanceLabel: {fileID: 951761106}
-  alertStateLabel: {fileID: 54152056}
-  zoneLabel: {fileID: 1159304623}
-  barLerpSpeed: 8
 --- !u!114 &1784059087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75040,11 +75035,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c1d3f39901e89340b7cc1e8f753cf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneName: Research Operations
-  requiredClearance: 2
-  suspicionRatePerSecond: 15
-  sprintSuspicionRate: 20
-  immediateInvestigation: 0
 --- !u!65 &1847739341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -86003,8 +85993,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9968bd97c4d8d504bacf733dbfa224ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedParam: Speed
-  damping: 8
 --- !u!114 &2136790665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86890,3 +86878,15 @@ SceneRoots:
   - {fileID: 328495367}
   - {fileID: 2112313413}
   - {fileID: 297525402}
+  - {fileID: 53873154}
+  - {fileID: 91204511}
+  - {fileID: 285042703}
+  - {fileID: 306267514}
+  - {fileID: 430756581}
+  - {fileID: 864976069}
+  - {fileID: 952502299}
+  - {fileID: 22082986}
+  - {fileID: 1318320515}
+  - {fileID: 1897093247}
+  - {fileID: 1959070434}
+  - {fileID: 2111759202}

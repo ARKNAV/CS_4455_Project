@@ -58,11 +58,15 @@ public class DisguiseBox : MonoBehaviour
         _boxRenderer = GetComponentInChildren<Renderer>();
 
         // Find the UI prompt in the scene
-        _uiPrompt = FindAnyObjectByType<DisguiseUIPrompt>();
+        _uiPrompt = FindAnyObjectByType<DisguiseUIPrompt>(FindObjectsInactive.Include);
     }
 
     void Update()
     {
+        // Fallback: retry finding the prompt if it wasn't ready during Start
+        if (_uiPrompt == null)
+            _uiPrompt = FindAnyObjectByType<DisguiseUIPrompt>(FindObjectsInactive.Include);
+
         if (!_playerInRange || isUsed || _playerDisguiseSystem == null) return;
         if (_playerDisguiseSystem.IsChanging || !CanPlayerUseThisBox()) return;
 
