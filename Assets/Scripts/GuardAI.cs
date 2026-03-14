@@ -94,9 +94,12 @@ public class GuardAI : MonoBehaviour
         if (player != null && CanSeePlayer())
         {
             EvaluateDisguiseOrSuspicion();
-            _state = GuardState.Chase;
-            Debug.Log("GuardAI state -> Chase", this);
-            _agent.speed = runSpeed;
+            if (_state != GuardState.Chase)
+            {
+                _state = GuardState.Chase;
+                Debug.Log("GuardAI state -> Chase", this);
+                _agent.speed = runSpeed;
+            }
             SetDestination(player.position);
         }
     }
