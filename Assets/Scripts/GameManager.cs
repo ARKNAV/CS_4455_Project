@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    public static Action LoseTriggerEvent;
     public static GameManager Instance { get; private set; }
 
     [Header("Mission Settings")]
@@ -53,9 +55,9 @@ public class GameManager : MonoBehaviour
             BasicControlScript bcs = ds.GetComponent<BasicControlScript>();
             if (bcs != null) bcs.enabled = false;
         }
-
+        LoseTriggerEvent.Invoke();
         // Reload after delay
-        Invoke(nameof(ReloadCurrentScene), failReloadDelay);
+        //Invoke(nameof(ReloadCurrentScene), failReloadDelay);
     }
 
     public static void TriggerLose()
