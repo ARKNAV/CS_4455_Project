@@ -1,26 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Drives the suspicion bar fill inside the unified StatusPanel.
-/// Shows clearance, alert state, and zone info.
-/// </summary>
 public class SuspicionUI : MonoBehaviour
 {
-    [Header("References")]
     public DisguiseSystem disguiseSystem;
-
-    [Header("Suspicion Bar")]
     public RectTransform suspicionFill;
     public Image suspicionFillImage;
-
-    [Header("Labels")]
     public Text clearanceLabel;
     public Text alertStateLabel;
     public Text zoneLabel;
     public Text disguiseLabel;
-
-    [Header("Settings")]
     public float barLerpSpeed = 8f;
 
     private float displayedSuspicion;
@@ -29,6 +18,12 @@ public class SuspicionUI : MonoBehaviour
     {
         if (disguiseSystem == null)
             disguiseSystem = FindFirstObjectByType<DisguiseSystem>();
+
+        if (suspicionFill == null)
+            FindFillByName("SuspicionFill");
+
+        if (alertStateLabel == null || clearanceLabel == null)
+            FindLabelsByName();
 
         displayedSuspicion = 0f;
         if (suspicionFill != null)
@@ -43,6 +38,28 @@ public class SuspicionUI : MonoBehaviour
         UpdateLabels();
     }
 
+    private void FindFillByName(string objectName)
+    {
+        GameObject go = GameObject.Find(objectName);
+        if (go == null) return;
+
+        suspicionFill = go.GetComponent<RectTransform>();
+        suspicionFillImage = go.GetComponent<Image>();
+        if (suspicionFill != null)
+            suspicionFill.pivot = new Vector2(0f, 0.5f);
+    }
+
+    private void FindLabelsByName()
+    {
+        GameObject suspicionLabel = GameObject.Find("SuspicionLabel");
+        if (suspicionLabel != null && alertStateLabel == null)
+            alertStateLabel = suspicionLabel.GetComponent<Text>();
+
+        GameObject disguiseLabel = GameObject.Find("DisguiseLabel");
+        if (disguiseLabel != null && clearanceLabel == null)
+            clearanceLabel = disguiseLabel.GetComponent<Text>();
+    }
+
     private void UpdateSuspicionBar()
     {
         float target = disguiseSystem.SuspicionNormalized;
@@ -52,6 +69,18 @@ public class SuspicionUI : MonoBehaviour
 
         if (suspicionFill != null)
             suspicionFill.localScale = new Vector3(Mathf.Clamp01(displayedSuspicion), 1f, 1f);
+
+        if (suspicionFillImage != null)
+        {
+            if (displayedSuspicion >= 0.8f)
+                suspicionFillImage.color = new Color(0.9f, 0.2f, 0.15f, 1f);
+            else if (displayedSuspicion >= 0.5f)
+                suspicionFillImage.color = new Color(0.9f, 0.5f, 0.05f, 1f);
+            else if (displayedSuspicion >= 0.2f)
+                suspicionFillImage.color = new Color(0.9f, 0.7f, 0.1f, 1f);
+            else
+                suspicionFillImage.color = new Color(0.3f, 0.7f, 0.3f, 1f);
+        }
     }
 
     private void UpdateLabels()
@@ -61,11 +90,11 @@ public class SuspicionUI : MonoBehaviour
             if (disguiseSystem.IsDisguised)
             {
                 string cl = GetGuardLabel(disguiseSystem.CurrentClearance).ToUpper();
-                clearanceLabel.text = $"CLEARANCE: <color=#88CCFF>{cl}</color>";
+                clearanceLabel.text = $"DISGUISE: <color=#88CCFF>{cl}</color>";
             }
             else
             {
-                clearanceLabel.text = "CLEARANCE: <color=#667788>NONE</color>";
+                clearanceLabel.text = "DISGUISE: <color=#667788>NONE</color>";
             }
         }
 
@@ -99,7 +128,7 @@ public class SuspicionUI : MonoBehaviour
             else if (s >= 0.2f)
                 alertStateLabel.text = "<color=#FFCC00>WATCHED</color>";
             else
-                alertStateLabel.text = "";
+                alertStateLabel.text = "SUSPICION";
         }
 
         if (zoneLabel != null)

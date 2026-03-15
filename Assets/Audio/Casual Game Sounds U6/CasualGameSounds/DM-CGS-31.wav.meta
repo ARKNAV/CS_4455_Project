@@ -1,7 +1,14 @@
 fileFormatVersion: 2
-guid: 65c29a8187d84744d80ce1f56076fb4d
+guid: cf6c0e7fbef9449c98a0cdb5ea0c4d9f
+labels:
+- Audio
+- Casual
+- Sound
+- SFX
+- Effect
+timeCreated: 1453238770
+licenseType: Store
 AudioImporter:
-  externalObjects: {}
   serializedVersion: 6
   defaultSettings:
     loadType: 0
@@ -15,15 +22,14 @@ AudioImporter:
   normalize: 1
   preloadAudioData: 1
   loadInBackground: 0
-  ambisonic: 0
   3D: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 262072
-  packageName: Footsteps Small Sound Pack
-  packageVersion: 1.0
-  assetPath: Assets/Footsteps Small Sound Pack/Stone/S_Stone_Mono_13.wav
-  uploadId: 604354
+  productId: 54116
+  packageName: FREE Casual Game SFX Pack
+  packageVersion: 1.1
+  assetPath: Assets/Casual Game Sounds U6/CasualGameSounds/DM-CGS-31.wav
+  uploadId: 688818

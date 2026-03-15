@@ -13,20 +13,10 @@ public enum GuardState
 
 public class GuardAI : MonoBehaviour
 {
-    [Header("Patrol")]
     [SerializeField] Transform[] patrolPoints;
     [SerializeField] float walkSpeed = 1.5f;
-
-    [Header("Hearing")]
     [SerializeField] float baseHearingRadius = 12f;
-    [SerializeField] float faintNoiseSuspicion = 25f;
-    [Range(0.3f, 0.9f)]
-    [SerializeField] float strongHearingFraction = 0.6f;
-
-    [Header("Investigate")]
     [SerializeField] float investigateWaitTime = 2f;
-
-    [Header("Vision")]
     [SerializeField] Transform player;
     [SerializeField] float viewDistance = 10f;
     [SerializeField] float fovDegrees = 90f;
@@ -34,8 +24,9 @@ public class GuardAI : MonoBehaviour
     [SerializeField] float peripheralFovDegrees = 150f;
     [SerializeField] float fullSightSuspicionRate = 160f;
     [SerializeField] float glimpseSuspicionRate = 50f;
-
-    [Header("Chase")]
+    [SerializeField] float faintNoiseSuspicion = 25f;
+    [Range(0.3f, 0.9f)]
+    [SerializeField] float strongHearingFraction = 0.6f;
     [SerializeField] float runSpeed = 4f;
     [SerializeField] float catchDistance = 1.5f;
 
@@ -51,25 +42,22 @@ public class GuardAI : MonoBehaviour
     [Tooltip("Material to swap onto the torso when the guard's disguise is stripped")]
     public Material strippedTorsoMaterial;
 
-    // ── Private state ──────────────────────────────────────────────────
     private NavMeshAgent _agent;
-    private Animator     _animator;
-    private GuardState   _state = GuardState.Patrol;
-    private int          _patrolIndex;
-    private bool         _patrolForward = true;
-    private Vector3      _investigateTarget;
-    private float        _investigateWaitUntil;
+    private Animator _animator;
+    private GuardState _state = GuardState.Patrol;
+    private int _patrolIndex;
+    private bool _patrolForward = true;
+    private Vector3 _investigateTarget;
+    private float _investigateWaitUntil;
     private DisguiseSystem _disguiseSystem;
-    private Vector3      _lastKnownPlayerPosition;
-    private bool         _isObserving;
-    private bool         _disguiseAvailable = true;
+    private Vector3 _lastKnownPlayerPosition;
+    private bool _isObserving;
+    private bool _disguiseAvailable = true;
 
-    // ── Public accessors ────────────────────────────────────────────────
-    public GuardState      CurrentState      => _state;
-    public bool            IsIncapacitated   => _state == GuardState.TakenDown || _state == GuardState.Tackled;
-    public bool            DisguiseAvailable => _disguiseAvailable && guardOutfit != null;
+    public GuardState CurrentState => _state;
+    public bool IsIncapacitated => _state == GuardState.TakenDown || _state == GuardState.Tackled;
+    public bool DisguiseAvailable => _disguiseAvailable && guardOutfit != null;
 
-    // ─────────────────────────────────────────────────────────────────────
     void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -137,8 +125,7 @@ public class GuardAI : MonoBehaviour
 
         EvaluateDisguiseOrSuspicion();
 
-        // Drive Speed parameter directly — works even when GuardAnimatorController
-        // is on a different GameObject.
+        // Drive Speed parameter for animator
         if (_animator != null && _animator.runtimeAnimatorController != null)
         {
             float spd = _agent.enabled ? _agent.velocity.magnitude : 0f;
@@ -146,27 +133,19 @@ public class GuardAI : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  Takedown / Tackle
-    // ─────────────────────────────────────────────────────────────────────
+    // ── Takedown / Tackle ───────────────────────────────────────────────
 
-    /// <summary>
-    /// Called by GuardTakedownController when the player stealth-takedowns this guard.
-    /// Guard faces away from the player so it falls in the same forward direction.
-    /// </summary>
     public void TakeDown()
     {
         if (IsIncapacitated) return;
         _state = GuardState.TakenDown;
 
-        // Stop NavMeshAgent
         if (_agent != null && _agent.isOnNavMesh)
         {
             _agent.isStopped = true;
             _agent.enabled   = false;
         }
 
-        // Face guard AWAY from player
         if (player != null)
         {
             Vector3 away = transform.position - player.position;
@@ -175,7 +154,6 @@ public class GuardAI : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(away.normalized, Vector3.up);
         }
 
-        // Play KnockedOut animation and fall flat
         Animator anim = _animator ?? GetComponentInChildren<Animator>(true);
         if (anim != null)
         {
@@ -191,9 +169,6 @@ public class GuardAI : MonoBehaviour
         StartCoroutine(RecoverAfterDelay(recoveryTime));
     }
 
-    /// <summary>
-    /// Called when the guard catches the player.
-    /// </summary>
     private void TriggerTackle()
     {
         if (IsIncapacitated) return;
@@ -202,7 +177,6 @@ public class GuardAI : MonoBehaviour
         if (_agent != null && _agent.isOnNavMesh)
             _agent.isStopped = true;
 
-        // Snap guard onto the player for visual contact
         if (player != null)
         {
             Vector3 dir = transform.position - player.position;
@@ -215,7 +189,6 @@ public class GuardAI : MonoBehaviour
         if (_animator != null && _animator.runtimeAnimatorController != null)
             _animator.SetTrigger("Tackle");
 
-        // Notify player
         if (player != null)
         {
             GuardTakedownController tc = player.GetComponent<GuardTakedownController>()
@@ -226,20 +199,13 @@ public class GuardAI : MonoBehaviour
         else GameManager.TriggerLose();
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  Disguise loot
-    // ─────────────────────────────────────────────────────────────────────
+    // ── Disguise loot ───────────────────────────────────────────────────
 
-    /// <summary>
-    /// Called by GuardDisguisePickup when the player takes this guard's disguise.
-    /// Makes the guard's torso visually stripped and marks the outfit as taken.
-    /// </summary>
     public void StripDisguise()
     {
         if (!_disguiseAvailable) return;
         _disguiseAvailable = false;
 
-        // Grey out / hide the guard's torso renderers
         SkinnedMeshRenderer[] smrs = GetComponentsInChildren<SkinnedMeshRenderer>(true);
         foreach (var smr in smrs)
         {
@@ -251,50 +217,37 @@ public class GuardAI : MonoBehaviour
                     Material[] mats = smr.materials;
                     for (int i = 0; i < mats.Length; i++) mats[i] = strippedTorsoMaterial;
                     smr.materials = mats;
-                    Debug.Log($"[GuardAI] '{name}': torso '{smr.name}' stripped.");
                 }
                 else
                 {
-                    // No stripped material — dim the existing material instead
                     Material[] mats = smr.materials;
                     for (int i = 0; i < mats.Length; i++)
                     {
                         mats[i] = new Material(mats[i]) { color = new Color(0.3f, 0.3f, 0.3f, 1f) };
                     }
                     smr.materials = mats;
-                    Debug.Log($"[GuardAI] '{name}': torso '{smr.name}' dimmed (no stripped material assigned).");
                 }
             }
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  Recovery
-    // ─────────────────────────────────────────────────────────────────────
+    // ── Recovery ────────────────────────────────────────────────────────
 
     private IEnumerator RecoverAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        Debug.Log($"[GuardAI] '{name}': recovering from knockout.");
-
-        // Restore upright rotation via FallGroundAnchor if it exists
         Animator anim = _animator ?? GetComponentInChildren<Animator>(true);
         FallGroundAnchor anchor = anim != null ? anim.gameObject.GetComponent<FallGroundAnchor>() : null;
 
         if (anchor != null && anchor.IsFallen)
-        {
             anchor.RestoreUpright(OnRecoveryComplete);
-        }
         else
-        {
             OnRecoveryComplete();
-        }
     }
 
     private void OnRecoveryComplete()
     {
-        // Re-enable NavMeshAgent
         if (_agent != null)
         {
             _agent.enabled   = true;
@@ -302,20 +255,17 @@ public class GuardAI : MonoBehaviour
             _agent.speed     = walkSpeed;
         }
 
-        // Reset state
         _state = GuardState.Patrol;
         _patrolForward = true;
 
-        // Play idle animation
         Animator anim = _animator ?? GetComponentInChildren<Animator>(true);
         if (anim != null && anim.runtimeAnimatorController != null)
             anim.SetFloat("Speed", 0f);
 
-        // Resume patrol from nearest point
         if (patrolPoints != null && patrolPoints.Length > 0)
         {
             float best = float.MaxValue;
-            int   idx  = 0;
+            int idx = 0;
             for (int i = 0; i < patrolPoints.Length; i++)
             {
                 if (patrolPoints[i] == null) continue;
@@ -325,13 +275,9 @@ public class GuardAI : MonoBehaviour
             _patrolIndex = idx;
             SetDestination(patrolPoints[idx].position);
         }
-
-        Debug.Log($"[GuardAI] '{name}': resumed patrol.");
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  Patrol / Investigate / Chase
-    // ─────────────────────────────────────────────────────────────────────
+    // ── Patrol / Investigate / Chase ────────────────────────────────────
 
     private void OnNoiseHeard(Vector3 position, float noiseRadius)
     {
@@ -437,9 +383,7 @@ public class GuardAI : MonoBehaviour
             TriggerTackle();
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  Vision / Suspicion (restored from main)
-    // ─────────────────────────────────────────────────────────────────────
+    // ── Vision / Suspicion ──────────────────────────────────────────────
 
     private int GetPlayerVisionLevel()
     {
@@ -586,10 +530,6 @@ public class GuardAI : MonoBehaviour
             SetDestination(patrolPoints[idx].position);
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────────
-    //  Helpers
-    // ─────────────────────────────────────────────────────────────────────
 
     private void SetDestination(Vector3 worldPosition)
     {

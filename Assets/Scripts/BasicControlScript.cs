@@ -8,6 +8,7 @@ public class BasicControlScript : MonoBehaviour
     private Animator anim;
     private Rigidbody rbody;
     private CharacterInputController cinput;
+    private AudioSource audioSource;
 
     public Transform cameraTransform;
 
@@ -21,6 +22,9 @@ public class BasicControlScript : MonoBehaviour
     public float deceleration = 18f;
     public float airControlMultiplier = 0.35f;
     public float groundCheckDistance = 1.1f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip jumpClip;
 
     private readonly HashSet<int> groundContacts = new HashSet<int>();
     private Vector3 desiredPlanarVelocity;
@@ -56,9 +60,17 @@ public class BasicControlScript : MonoBehaviour
         anim = GetComponent<Animator>();
         rbody = GetComponent<Rigidbody>();
         cinput = GetComponent<CharacterInputController>();
+        audioSource = GetComponent<AudioSource>();
 
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f;
+        }
     }
 
     void Start()
@@ -119,6 +131,7 @@ public class BasicControlScript : MonoBehaviour
         {
             rbody.linearVelocity = new Vector3(rbody.linearVelocity.x, 0f, rbody.linearVelocity.z);
             rbody.AddForce(Vector3.up * 7f, ForceMode.Impulse);
+            PlayClip(jumpClip);
         }
     }
 
@@ -209,5 +222,13 @@ public class BasicControlScript : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void PlayClip(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }

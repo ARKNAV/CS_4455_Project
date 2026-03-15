@@ -55,6 +55,13 @@ public class KeycardReaderController : MonoBehaviour
     [SerializeField] private string accessGrantedMessage = "Access granted. Door unlocked.";
     [SerializeField] private float feedbackDuration = 2f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource interactionAudioSource;
+    [SerializeField] private AudioClip keypadSwipeClip;
+    [SerializeField] private AudioClip accessDeniedClip;
+    [SerializeField] private AudioClip accessGrantedClip;
+    [SerializeField] private AudioClip doorOpenClip;
+
     [Header("Objective")]
     [SerializeField] private bool completeExitObjectiveOnSuccess = true;
     [SerializeField] private string exitObjectiveId = "exit";
@@ -78,6 +85,18 @@ public class KeycardReaderController : MonoBehaviour
         if (readerRenderer == null)
         {
             readerRenderer = GetComponentInChildren<Renderer>();
+        }
+
+        if (interactionAudioSource == null)
+        {
+            interactionAudioSource = GetComponent<AudioSource>();
+        }
+
+        if (interactionAudioSource == null)
+        {
+            interactionAudioSource = gameObject.AddComponent<AudioSource>();
+            interactionAudioSource.playOnAwake = false;
+            interactionAudioSource.spatialBlend = 0f;
         }
 
         doorOpenBoolHash = Animator.StringToHash(doorOpenBool);
@@ -187,6 +206,8 @@ public class KeycardReaderController : MonoBehaviour
             playerAnimator.SetTrigger(useReaderTriggerHash);
         }
 
+        PlayClip(keypadSwipeClip);
+
         if (interactionLockDuration > 0f)
         {
             yield return new WaitForSeconds(interactionLockDuration);
@@ -209,6 +230,8 @@ public class KeycardReaderController : MonoBehaviour
 
     private void EvaluateAccess()
     {
+        bool wasUnlocked = isUnlocked;
+
         PlayerInventory inventory = PlayerInventory.Instance;
         if (inventory == null)
         {
@@ -220,6 +243,7 @@ public class KeycardReaderController : MonoBehaviour
         {
             SetReaderColor(accessDeniedColor);
             SetDoorOpen(false);
+            PlayClip(accessDeniedClip);
             ShowFeedback(needsCardMessage, accessDeniedColor);
             QueueReaderIdleReset();
             return;
@@ -228,6 +252,11 @@ public class KeycardReaderController : MonoBehaviour
         isUnlocked = true;
         SetReaderColor(accessGrantedColor);
         SetDoorOpen(true);
+        PlayClip(accessGrantedClip);
+        if (!wasUnlocked)
+        {
+            PlayClip(doorOpenClip);
+        }
         ShowFeedback(accessGrantedMessage, accessGrantedColor);
         QueueReaderIdleReset();
 
@@ -383,6 +412,14 @@ public class KeycardReaderController : MonoBehaviour
         }
 
         InteractionFeedbackHUD.Instance.ShowMessage(message, messageColor, feedbackDuration);
+    }
+
+    private void PlayClip(AudioClip clip)
+    {
+        if (interactionAudioSource != null && clip != null)
+        {
+            interactionAudioSource.PlayOneShot(clip);
+        }
     }
 
     private void SetReaderColor(Color targetColor)
