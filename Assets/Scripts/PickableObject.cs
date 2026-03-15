@@ -39,13 +39,6 @@ public class PickableObject : MonoBehaviour
 
     public void OnPickedUp()
     {
-        if (winTrigger && winCanvas != null)
-        {
-            winCanvas.interactable = true;
-            winCanvas.blocksRaycasts = true;
-            winCanvas.alpha = 1f;
-            Time.timeScale = 0f;
-        }
         IsHeld = true;
         wasThrown = false;
         impactPlayedSinceThrow = false;
