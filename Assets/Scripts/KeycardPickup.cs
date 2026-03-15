@@ -7,9 +7,14 @@ public class KeycardPickup : MonoBehaviour
     [SerializeField] private bool completeObjectiveOnPickup = true;
     [SerializeField] private string objectiveId = "idcard";
 
+    [Header("Requirements")]
+    [SerializeField] private bool requireDisguise = true;
+
     [Header("Feedback")]
     [SerializeField] private string pickupMessage = "Key card collected";
     [SerializeField] private float pickupMessageDuration = 2f;
+    [SerializeField] private string disguiseRequiredMessage = "You need a disguise to pick this up";
+    [SerializeField] private float disguiseRequiredMessageDuration = 2f;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -43,6 +48,19 @@ public class KeycardPickup : MonoBehaviour
         if (collected || !other.CompareTag(playerTag))
         {
             return;
+        }
+
+        if (requireDisguise)
+        {
+            DisguiseSystem disguiseSystem = other.GetComponentInParent<DisguiseSystem>();
+            if (disguiseSystem == null || !disguiseSystem.IsDisguised)
+            {
+                if (InteractionFeedbackHUD.Instance != null)
+                {
+                    InteractionFeedbackHUD.Instance.ShowMessage(disguiseRequiredMessage, disguiseRequiredMessageDuration);
+                }
+                return;
+            }
         }
 
         PlayerInventory inventory = PlayerInventory.Instance;
