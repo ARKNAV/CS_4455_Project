@@ -52,6 +52,13 @@ public class CharacterInputController : MonoBehaviour {
         private set;
     }
 
+    /// <summary>F key — universal interact (disguise, keycard, takedown).</summary>
+    public bool Interact
+    {
+        get;
+        private set;
+    }
+
     public bool Jump
     {
         get;
@@ -97,8 +104,9 @@ public class CharacterInputController : MonoBehaviour {
 	        h = (Keyboard.current.dKey.isPressed ? 1f : 0f) + (Keyboard.current.aKey.isPressed ? -1f : 0f);
 	        v = (Keyboard.current.wKey.isPressed ? 1f : 0f) + (Keyboard.current.sKey.isPressed ? -1f : 0f);
 	        Action = Keyboard.current != null && (Keyboard.current.digit1Key.wasPressedThisFrame);
+	        Interact = Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame;
 
-	        isCrouching = Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.cKey.isPressed;
+	        isCrouching = Keyboard.current.leftCtrlKey.isPressed;
 	        sprintHeld = Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
 	        spacePressedThisFrame = Keyboard.current.spaceKey.wasPressedThisFrame;
 	    }
@@ -107,8 +115,9 @@ public class CharacterInputController : MonoBehaviour {
 	    h = Input.GetAxisRaw("Horizontal");
 	    v = Input.GetAxisRaw("Vertical");
 	    Action = Input.GetKeyDown(KeyCode.Alpha1);
+	    Interact = Input.GetKeyDown(KeyCode.F);
 
-	    isCrouching = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C);
+	    isCrouching = Input.GetKey(KeyCode.LeftControl);
 	    sprintHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 	    spacePressedThisFrame = Input.GetKeyDown(KeyCode.Space);
 	#endif
