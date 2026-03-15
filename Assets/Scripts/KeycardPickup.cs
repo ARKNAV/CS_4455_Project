@@ -11,7 +11,26 @@ public class KeycardPickup : MonoBehaviour
     [SerializeField] private string pickupMessage = "Key card collected";
     [SerializeField] private float pickupMessageDuration = 2f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip pickupClip;
+
     private bool collected;
+
+    private void Awake()
+    {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f;
+        }
+    }
 
     private void Reset()
     {
@@ -53,6 +72,11 @@ public class KeycardPickup : MonoBehaviour
         if (InteractionFeedbackHUD.Instance != null)
         {
             InteractionFeedbackHUD.Instance.ShowMessage(pickupMessage, pickupMessageDuration);
+        }
+
+        if (audioSource != null && pickupClip != null)
+        {
+            audioSource.PlayOneShot(pickupClip);
         }
 
         gameObject.SetActive(false);
