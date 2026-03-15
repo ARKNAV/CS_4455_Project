@@ -3717,6 +3717,7 @@ MonoBehaviour:
   deceleration: 22
   airControlMultiplier: 0.45
   groundCheckDistance: 1.25
+  jumpClip: {fileID: 8300000, guid: d6ddefa466a465147a902f1ac9720e96, type: 3}
 --- !u!114 &66678672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12647,7 +12648,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 9641e21e3382384428b4656e10b53da4, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.378
+  m_Volume: 0.209
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -12744,7 +12745,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mode: 1
-  walkClips: []
+  walkClips:
+  - {fileID: 8300000, guid: 9641e21e3382384428b4656e10b53da4, type: 3}
   runClips: []
   walkVolume: 0.8
   runVolume: 1.2
@@ -29414,6 +29416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66b01203124645278e8241e1b612a68b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thrownImpactClip: {fileID: 8300000, guid: 8aad32fd1dd148d438ce57e2b2a30581, type: 3}
+  minImpactVelocity: 1.5
 --- !u!1 &700000004 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 169952, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
@@ -63567,6 +63571,8 @@ MonoBehaviour:
   objectiveId: idcard
   pickupMessage: Key card collected
   pickupMessageDuration: 2
+  audioSource: {fileID: 66678670}
+  pickupClip: {fileID: 8300000, guid: 52320e590bf774734a288886eba557ba, type: 3}
 --- !u!65 &1559638937
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -86350,6 +86356,11 @@ MonoBehaviour:
   needsCardMessage: You need to collect the key card first.
   accessGrantedMessage: Access granted. Door unlocked.
   feedbackDuration: 2
+  interactionAudioSource: {fileID: 66678670}
+  keypadSwipeClip: {fileID: 8300000, guid: 81652031b64c342cc8dbc59c138d77c5, type: 3}
+  accessDeniedClip: {fileID: 8300000, guid: df729d213c4be44a9b55cd109f5cd4f9, type: 3}
+  accessGrantedClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  doorOpenClip: {fileID: 8300000, guid: 4e1ff8faed12a475eba9be0e46072269, type: 3}
   completeExitObjectiveOnSuccess: 1
   exitObjectiveId: exit
 --- !u!65 &2137007315
