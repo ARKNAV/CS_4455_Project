@@ -84,12 +84,54 @@ public class DemoObjectiveManager : MonoBehaviour
     {
         objectiveSteps = new List<DemoObjectiveStep>
         {
-            new DemoObjectiveStep { id = "crouch", text = "Objective: Crouch behind the large crate.\n[Left Ctrl / C] to crouch" },
-            new DemoObjectiveStep { id = "peek", text = "Objective: Peek around the corner. Do not get caught.\n[Q] peek left  [E] peek right" },
-            new DemoObjectiveStep { id = "takedown", text = "Objective: Take down the dock worker.\n[1] to pick up and throw" },
-            new DemoObjectiveStep { id = "disguise", text = "Objective: Swap into a disguise.\n[F] near a disguise box to equip" },
-            new DemoObjectiveStep { id = "idcard", text = "Objective: Retrieve the Dock Supervisor ID Card from the locker.\n[F] to interact" },
-            new DemoObjectiveStep { id = "exit", text = "Objective: Use the ID Card on the main door.\n[F] on the keycard reader" }
+            new DemoObjectiveStep
+            {
+                id   = "crouch",
+                text = "<color=#FFCC44><b>▶  STAY HIDDEN</b></color>\n" +
+                       "<color=#888888>──────────────────────────</color>\n" +
+                       "Crouch behind the large crate\n" +
+                       "<color=#556677><size=11>[LEFT CTRL]  to crouch</size></color>"
+            },
+            new DemoObjectiveStep
+            {
+                id   = "peek",
+                text = "<color=#FFCC44><b>▶  OBSERVE UNSEEN</b></color>\n" +
+                       "<color=#888888>──────────────────────────</color>\n" +
+                       "Peek around the corner — do not get spotted\n" +
+                       "<color=#556677><size=11>[Q] peek left   [E] peek right</size></color>"
+            },
+            new DemoObjectiveStep
+            {
+                id   = "takedown",
+                text = "<color=#FF6644><b>▶  NEUTRALIZE TARGET</b></color>\n" +
+                       "<color=#888888>──────────────────────────</color>\n" +
+                       "Silently take down the dock guard\n" +
+                       "<color=#556677><size=11>[F]  near a guard to execute takedown</size></color>"
+            },
+            new DemoObjectiveStep
+            {
+                id   = "disguise",
+                text = "<color=#44CCFF><b>▶  CHANGE IDENTITY</b></color>\n" +
+                       "<color=#888888>──────────────────────────</color>\n" +
+                       "Acquire a guard disguise\n" +
+                       "<color=#556677><size=11>[F]  near disguise box  —or—  near downed guard</size></color>"
+            },
+            new DemoObjectiveStep
+            {
+                id   = "idcard",
+                text = "<color=#FFCC44><b>▶  RETRIEVE CREDENTIALS</b></color>\n" +
+                       "<color=#888888>──────────────────────────</color>\n" +
+                       "Locate the Dock Supervisor ID Card\n" +
+                       "<color=#556677><size=11>[F]  to pick up the keycard</size></color>"
+            },
+            new DemoObjectiveStep
+            {
+                id   = "exit",
+                text = "<color=#44FF88><b>▶  BREACH THE DOOR</b></color>\n" +
+                       "<color=#888888>──────────────────────────</color>\n" +
+                       "Use the ID Card on the security reader\n" +
+                       "<color=#556677><size=11>[F]  on the keycard panel to unlock</size></color>"
+            }
         };
     }
 
