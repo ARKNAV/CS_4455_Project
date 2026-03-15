@@ -75,6 +75,8 @@ public class KeycardReaderController : MonoBehaviour
     private Transform interactingPlayerRoot;
     private Coroutine colorResetRoutine;
 
+    public static Action WinTriggerEvent;
+
     public bool IsUnlocked
     {
         get { return isUnlocked; }
@@ -268,6 +270,8 @@ public class KeycardReaderController : MonoBehaviour
                 manager.CompleteObjective(exitObjectiveId);
             }
         }
+
+        WinTriggerEvent.Invoke();
     }
 
     private void QueueReaderIdleReset()
