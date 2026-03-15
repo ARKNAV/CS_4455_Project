@@ -167,8 +167,22 @@ public class PeekSystem : MonoBehaviour
 
     bool CanPeekInDirection(int direction)
     {
-        // Wall detection disabled — player can peek at any time.
-        return direction != 0;
+        if (wallPeek == null)
+        {
+            return true;
+        }
+
+        if (direction < 0)
+        {
+            return wallPeek.CanPeekLeft;
+        }
+
+        if (direction > 0)
+        {
+            return wallPeek.CanPeekRight;
+        }
+
+        return false;
     }
 
     void UpdatePeek()

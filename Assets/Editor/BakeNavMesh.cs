@@ -1,12 +1,11 @@
 using UnityEditor;
-using UnityEngine.AI;
-using UnityEditor.SceneManagement;
+using UnityEditor.AI;
 
 public class BakeNavMesh
 {
-    [MenuItem("Tools/Bake NavMesh")]
     public static void Execute()
     {
-        UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
+        NavMeshBuilder.BuildNavMesh();
+        UnityEngine.Debug.Log("NavMesh bake complete.");
     }
 }
