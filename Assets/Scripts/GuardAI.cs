@@ -10,24 +10,21 @@ public enum GuardState
 
 public class GuardAI : MonoBehaviour
 {
-    [Header("Patrol")]
     [SerializeField] Transform[] patrolPoints;
-    [SerializeField] float walkSpeed = 2f;
-
-    [Header("Hearing")]
+    [SerializeField] float walkSpeed = 1.5f;
     [SerializeField] float baseHearingRadius = 12f;
-
-    [Header("Investigate")]
     [SerializeField] float investigateWaitTime = 2f;
-
-    [Header("Vision")]
     [SerializeField] Transform player;
     [SerializeField] float viewDistance = 10f;
     [SerializeField] float fovDegrees = 90f;
     [SerializeField] LayerMask visionBlockers = Physics.DefaultRaycastLayers;
-
-    [Header("Chase")]
-    [SerializeField] float runSpeed = 5f;
+    [SerializeField] float peripheralFovDegrees = 150f;
+    [SerializeField] float fullSightSuspicionRate = 160f;
+    [SerializeField] float glimpseSuspicionRate = 50f;
+    [SerializeField] float faintNoiseSuspicion = 25f;
+    [Range(0.3f, 0.9f)]
+    [SerializeField] float strongHearingFraction = 0.6f;
+    [SerializeField] float runSpeed = 4f;
     [SerializeField] float catchDistance = 1.5f;
 
     private NavMeshAgent _agent;
@@ -36,6 +33,9 @@ public class GuardAI : MonoBehaviour
     private bool _patrolForward = true;
     private Vector3 _investigateTarget;
     private float _investigateWaitUntil;
+    private DisguiseSystem _disguiseSystem;
+    private Vector3 _lastKnownPlayerPosition;
+    private bool _isObserving;
 
     void Awake()
     {
@@ -52,10 +52,26 @@ public class GuardAI : MonoBehaviour
     void OnDisable()
     {
         EventManager.RemoveListener<NoiseEmittedEvent, Vector3, float>(OnNoiseHeard);
+        SetObserving(false);
     }
 
     void Start()
     {
+        if (!_agent.isOnNavMesh)
+            Debug.LogWarning("GuardAI: NavMeshAgent is not on a NavMesh.", this);
+
+        if (patrolPoints == null || patrolPoints.Length == 0)
+            Debug.LogWarning("GuardAI: No patrol points assigned.", this);
+
+        if (peripheralFovDegrees <= 0f) peripheralFovDegrees = 150f;
+        if (fullSightSuspicionRate <= 0f) fullSightSuspicionRate = 160f;
+        if (glimpseSuspicionRate <= 0f) glimpseSuspicionRate = 50f;
+        if (faintNoiseSuspicion <= 0f) faintNoiseSuspicion = 25f;
+        if (strongHearingFraction <= 0f) strongHearingFraction = 0.6f;
+
+        _disguiseSystem = FindFirstObjectByType<DisguiseSystem>();
+        _lastKnownPlayerPosition = transform.position;
+
         _agent.speed = walkSpeed;
         if (patrolPoints != null && patrolPoints.Length > 0)
         {
@@ -66,8 +82,6 @@ public class GuardAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
-
         switch (_state)
         {
             case GuardState.Patrol:
@@ -81,29 +95,44 @@ public class GuardAI : MonoBehaviour
                 break;
         }
 
-        if (CanSeePlayer())
-        {
-            EvaluateDisguiseOrSuspicion();
-            _state = GuardState.Chase;
-            _agent.speed = runSpeed;
-            _agent.SetDestination(player.position);
-        }
+        EvaluateDisguiseOrSuspicion();
     }
 
     private void OnNoiseHeard(Vector3 position, float noiseRadius)
     {
         if (_state == GuardState.Chase) return;
+
         float dist = Vector3.Distance(transform.position, position);
         if (dist > baseHearingRadius || dist > noiseRadius) return;
-        _investigateTarget = position;
-        _state = GuardState.Investigate;
-        _agent.speed = walkSpeed;
-        _agent.SetDestination(position);
+
+        _lastKnownPlayerPosition = position;
+        float strongRadius = baseHearingRadius * strongHearingFraction;
+
+        if (dist <= strongRadius)
+        {
+            _investigateTarget = position;
+            _state = GuardState.Investigate;
+            _agent.speed = walkSpeed;
+            SetDestination(position);
+        }
+        else if (_disguiseSystem != null)
+        {
+            _disguiseSystem.AddSuspicion(faintNoiseSuspicion, "Faint noise");
+        }
+        else
+        {
+            _investigateTarget = position;
+            _state = GuardState.Investigate;
+            _agent.speed = walkSpeed;
+            SetDestination(position);
+        }
     }
 
     private void UpdatePatrol()
     {
         if (patrolPoints == null || patrolPoints.Length == 0) return;
+        if (!CanQueryAgentPath()) return;
+
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             if (_patrolForward)
@@ -131,6 +160,8 @@ public class GuardAI : MonoBehaviour
 
     private void UpdateInvestigate()
     {
+        if (!CanQueryAgentPath()) return;
+
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             if (_investigateWaitUntil <= 0f)
@@ -165,44 +196,172 @@ public class GuardAI : MonoBehaviour
     private void UpdateChase()
     {
         if (player == null) return;
-        _agent.SetDestination(player.position);
+        SetDestination(player.position);
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= catchDistance)
-        {
             GameManager.TriggerLose();
-        }
     }
 
-    private bool CanSeePlayer()
+    private int GetPlayerVisionLevel()
     {
-        if (player == null) return false;
+        if (player == null) return 0;
         Vector3 toPlayer = player.position - transform.position;
         toPlayer.y = 0f;
         float dist = toPlayer.magnitude;
-        if (dist > viewDistance) return false;
+        if (dist > viewDistance) return 0;
+
         toPlayer.Normalize();
         float angle = Vector3.Angle(transform.forward, toPlayer);
-        if (angle > fovDegrees * 0.5f) return false;
+        if (angle > peripheralFovDegrees * 0.5f) return 0;
+
         Vector3 origin = transform.position + Vector3.up * 1f;
         Vector3 dir = (player.position + Vector3.up * 1f - origin).normalized;
-        if (!Physics.Raycast(origin, dir, out RaycastHit hit, viewDistance, visionBlockers, QueryTriggerInteraction.Ignore))
-            return false;
-        Transform t = hit.collider.transform;
-        while (t != null)
+        RaycastHit[] hits = Physics.RaycastAll(origin, dir, viewDistance, visionBlockers, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (RaycastHit hit in hits)
         {
-            if (t == player) return true;
-            t = t.parent;
+            if (IsChildOf(hit.collider.transform, transform)) continue;
+
+            if (IsChildOf(hit.collider.transform, player))
+                return angle <= fovDegrees * 0.5f ? 2 : 1;
+
+            return 0;
         }
-        return false;
+        return 0;
     }
 
     private void EvaluateDisguiseOrSuspicion()
     {
+        int visionLevel = GetPlayerVisionLevel();
+        bool isDisguised = _disguiseSystem != null && _disguiseSystem.IsDisguised;
+
+        if (player != null && visionLevel >= 1)
+            _lastKnownPlayerPosition = player.position;
+
+        SetObserving(visionLevel > 0 && !isDisguised);
+
+        if (_disguiseSystem == null)
+        {
+            if (visionLevel >= 2)
+            {
+                if (_state != GuardState.Chase)
+                {
+                    _state = GuardState.Chase;
+                    _agent.speed = runSpeed;
+                }
+                if (player != null) SetDestination(player.position);
+            }
+            return;
+        }
+
+        if (isDisguised)
+        {
+            if (_state == GuardState.Chase && visionLevel >= 1)
+                ReturnToPatrol();
+            return;
+        }
+
+        if (visionLevel == 2)
+            _disguiseSystem.AddSuspicion(fullSightSuspicionRate * Time.deltaTime, "Direct sight");
+        else if (visionLevel == 1)
+            _disguiseSystem.AddSuspicion(glimpseSuspicionRate * Time.deltaTime, "Peripheral glimpse");
+
+        float suspicion = _disguiseSystem.SuspicionNormalized;
+
+        if (suspicion >= 0.8f)
+        {
+            if (_state != GuardState.Chase)
+            {
+                _state = GuardState.Chase;
+                _agent.speed = runSpeed;
+            }
+            SetDestination(visionLevel >= 1 && player != null ? player.position : _lastKnownPlayerPosition);
+        }
+        else if (suspicion >= 0.2f)
+        {
+            if (_state == GuardState.Patrol)
+            {
+                _state = GuardState.Investigate;
+                _investigateTarget = _lastKnownPlayerPosition;
+                _agent.speed = walkSpeed;
+                SetDestination(_investigateTarget);
+            }
+            else if (_state == GuardState.Chase)
+            {
+                _state = GuardState.Investigate;
+                _investigateTarget = _lastKnownPlayerPosition;
+                _agent.speed = walkSpeed;
+                SetDestination(_investigateTarget);
+            }
+        }
+        else if (_state == GuardState.Chase)
+        {
+            _state = GuardState.Investigate;
+            _investigateTarget = _lastKnownPlayerPosition;
+            _agent.speed = walkSpeed;
+            SetDestination(_investigateTarget);
+        }
+    }
+
+    private void SetObserving(bool observing)
+    {
+        if (_disguiseSystem == null) return;
+        if (observing && !_isObserving)
+        {
+            _disguiseSystem.AddObserver();
+            _isObserving = true;
+        }
+        else if (!observing && _isObserving)
+        {
+            _disguiseSystem.RemoveObserver();
+            _isObserving = false;
+        }
+    }
+
+    private void ReturnToPatrol()
+    {
+        _state = GuardState.Patrol;
+        _agent.speed = walkSpeed;
+        if (patrolPoints != null && patrolPoints.Length > 0)
+        {
+            float best = float.MaxValue;
+            int idx = 0;
+            for (int i = 0; i < patrolPoints.Length; i++)
+            {
+                if (patrolPoints[i] == null) continue;
+                float d = Vector3.Distance(transform.position, patrolPoints[i].position);
+                if (d < best)
+                {
+                    best = d;
+                    idx = i;
+                }
+            }
+            _patrolIndex = idx;
+            _patrolForward = true;
+            SetDestination(patrolPoints[idx].position);
+        }
     }
 
     private void SetDestination(Vector3 worldPosition)
     {
-        if (_agent.isOnNavMesh)
+        if (_agent != null && _agent.isOnNavMesh)
             _agent.SetDestination(worldPosition);
+    }
+
+    private bool CanQueryAgentPath()
+    {
+        return _agent != null && _agent.enabled && _agent.isOnNavMesh;
+    }
+
+    private static bool IsChildOf(Transform child, Transform parent)
+    {
+        Transform t = child;
+        while (t != null)
+        {
+            if (t == parent) return true;
+            t = t.parent;
+        }
+        return false;
     }
 }

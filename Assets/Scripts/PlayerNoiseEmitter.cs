@@ -9,9 +9,6 @@ public class PlayerNoiseEmitter : MonoBehaviour
     [SerializeField] float baseNoiseRadius = 8f;
     [SerializeField] float crouchNoiseMultiplier = 0.35f;
     [SerializeField] float runNoiseMultiplier = 1.5f;
-    [SerializeField] float emissionInterval = 0.4f;
-    [SerializeField] float minMoveMagnitude = 0.05f;
-
     private CharacterInputController _cinput;
     private float _nextEmitTime;
 
@@ -20,15 +17,9 @@ public class PlayerNoiseEmitter : MonoBehaviour
         _cinput = GetComponent<CharacterInputController>();
     }
 
-    void Update()
+    public void EmitFootstepNoise()
     {
         if (_cinput == null) return;
-
-        float moveMag = Mathf.Abs(_cinput.Forward) + Mathf.Abs(_cinput.Turn);
-        if (moveMag < minMoveMagnitude) return;
-
-        if (Time.time < _nextEmitTime) return;
-        _nextEmitTime = Time.time + emissionInterval;
 
         bool isCrouching = _cinput.IsCrouching;
         bool isRunning = _cinput.IsSprinting;
@@ -37,6 +28,9 @@ public class PlayerNoiseEmitter : MonoBehaviour
             radius *= crouchNoiseMultiplier;
         else if (isRunning)
             radius *= runNoiseMultiplier;
+
+        if (Time.time < _nextEmitTime) return;
+        _nextEmitTime = Time.time + 0.01f;
 
         EventManager.TriggerEvent<NoiseEmittedEvent, Vector3, float>(transform.position, radius);
     }
