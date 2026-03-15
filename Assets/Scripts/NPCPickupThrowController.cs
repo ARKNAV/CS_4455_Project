@@ -156,6 +156,7 @@ public class NPCPickupThrowController : MonoBehaviour
         heldBody.angularVelocity = Vector3.zero;
         heldBody.AddForce(throwDirection * throwForce, ForceMode.Impulse);
 
+        heldPickable?.MarkThrown();
         heldPickable?.OnDropped();
 
         heldPickable = null;

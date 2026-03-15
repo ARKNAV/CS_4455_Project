@@ -2,10 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Central game manager handling mission state, fail conditions, and scene management.
-/// Listens for MissionFailEvent from the suspicion/alert system.
-/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static Action LoseTriggerEvent;
@@ -28,24 +24,23 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    void OnEnable()
+    public static void TriggerLose()
     {
-        EventManager.AddListener<MissionFailEvent, string, string>(OnMissionFail);
+        if (Instance != null)
+        {
+            Instance.HandleMissionFail("Captured!");
+            return;
+        }
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    void OnDisable()
-    {
-        EventManager.RemoveListener<MissionFailEvent, string, string>(OnMissionFail);
-    }
-
-    private void OnMissionFail(string reason, string _unused)
+    private void HandleMissionFail(string reason)
     {
         if (MissionFailed) return;
         MissionFailed = true;
 
         Debug.Log($"[GameManager] Mission Failed: {reason}");
 
-        // Disable player controls
         DisguiseSystem ds = FindFirstObjectByType<DisguiseSystem>();
         if (ds != null)
         {
@@ -58,16 +53,6 @@ public class GameManager : MonoBehaviour
         LoseTriggerEvent.Invoke();
         // Reload after delay
         //Invoke(nameof(ReloadCurrentScene), failReloadDelay);
-    }
-
-    public static void TriggerLose()
-    {
-        if (Instance != null)
-        {
-            Instance.OnMissionFail("Captured!", "");
-            return;
-        }
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void ReloadCurrentScene()
