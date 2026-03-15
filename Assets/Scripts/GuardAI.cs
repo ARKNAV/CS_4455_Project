@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,9 +5,7 @@ public enum GuardState
 {
     Patrol,
     Investigate,
-    Chase,
-    TakenDown,
-    Tackled
+    Chase
 }
 
 public class GuardAI : MonoBehaviour
@@ -30,20 +27,7 @@ public class GuardAI : MonoBehaviour
     [SerializeField] float runSpeed = 4f;
     [SerializeField] float catchDistance = 1.5f;
 
-    [Header("Recovery")]
-    [Tooltip("Seconds before a knocked-out guard wakes up and resumes patrol")]
-    [SerializeField] float recoveryTime = 15f;
-
-    [Header("Disguise Loot")]
-    [Tooltip("Disguise outfit this guard carries — player can loot it when guard is down")]
-    public DisguiseOutfit guardOutfit;
-    [Tooltip("Security clearance this guard's disguise grants")]
-    public SecurityClearance guardClearance = SecurityClearance.Guard01;
-    [Tooltip("Material to swap onto the torso when the guard's disguise is stripped")]
-    public Material strippedTorsoMaterial;
-
     private NavMeshAgent _agent;
-    private Animator _animator;
     private GuardState _state = GuardState.Patrol;
     private int _patrolIndex;
     private bool _patrolForward = true;
@@ -52,22 +36,12 @@ public class GuardAI : MonoBehaviour
     private DisguiseSystem _disguiseSystem;
     private Vector3 _lastKnownPlayerPosition;
     private bool _isObserving;
-    private bool _disguiseAvailable = true;
-
-    public GuardState CurrentState => _state;
-    public bool IsIncapacitated => _state == GuardState.TakenDown || _state == GuardState.Tackled;
-    public bool DisguiseAvailable => _disguiseAvailable && guardOutfit != null;
 
     void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         if (_agent == null)
             _agent = gameObject.AddComponent<NavMeshAgent>();
-
-        _animator = GetComponentInChildren<Animator>();
-
-        // NavMeshAgent owns position — root motion would fight it.
-        if (_animator != null) _animator.applyRootMotion = false;
     }
 
     void OnEnable()
@@ -108,8 +82,6 @@ public class GuardAI : MonoBehaviour
 
     void Update()
     {
-        if (IsIncapacitated) return;
-
         switch (_state)
         {
             case GuardState.Patrol:
@@ -124,159 +96,7 @@ public class GuardAI : MonoBehaviour
         }
 
         EvaluateDisguiseOrSuspicion();
-
-        // Drive Speed parameter for animator
-        if (_animator != null && _animator.runtimeAnimatorController != null)
-        {
-            float spd = _agent.enabled ? _agent.velocity.magnitude : 0f;
-            _animator.SetFloat("Speed", spd);
-        }
     }
-
-    // ── Takedown / Tackle ───────────────────────────────────────────────
-
-    public void TakeDown()
-    {
-        if (IsIncapacitated) return;
-        _state = GuardState.TakenDown;
-
-        if (_agent != null && _agent.isOnNavMesh)
-        {
-            _agent.isStopped = true;
-            _agent.enabled   = false;
-        }
-
-        if (player != null)
-        {
-            Vector3 away = transform.position - player.position;
-            away.y = 0f;
-            if (away.sqrMagnitude > 0.001f)
-                transform.rotation = Quaternion.LookRotation(away.normalized, Vector3.up);
-        }
-
-        Animator anim = _animator ?? GetComponentInChildren<Animator>(true);
-        if (anim != null)
-        {
-            if (anim.runtimeAnimatorController != null)
-                anim.SetTrigger("KnockedOut");
-
-            FallGroundAnchor anchor = anim.gameObject.GetComponent<FallGroundAnchor>();
-            if (anchor == null) anchor = anim.gameObject.AddComponent<FallGroundAnchor>();
-            anchor.StartFall();
-        }
-
-        StartCoroutine(RecoverAfterDelay(recoveryTime));
-    }
-
-    private void TriggerTackle()
-    {
-        if (IsIncapacitated) return;
-        _state = GuardState.Tackled;
-
-        if (_agent != null && _agent.isOnNavMesh)
-            _agent.isStopped = true;
-
-        if (player != null)
-        {
-            Vector3 dir = transform.position - player.position;
-            dir.y = 0f;
-            if (dir.sqrMagnitude > 0.001f) dir.Normalize(); else dir = transform.forward;
-            transform.position = player.position + dir * 0.25f;
-            transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
-        }
-
-        if (_animator != null && _animator.runtimeAnimatorController != null)
-            _animator.SetTrigger("Tackle");
-
-        if (player != null)
-        {
-            GuardTakedownController tc = player.GetComponent<GuardTakedownController>()
-                                      ?? player.GetComponentInParent<GuardTakedownController>();
-            if (tc != null) tc.OnTackledByGuard(this);
-            else GameManager.TriggerLose();
-        }
-        else GameManager.TriggerLose();
-    }
-
-    // ── Disguise loot ───────────────────────────────────────────────────
-
-    public void StripDisguise()
-    {
-        if (!_disguiseAvailable) return;
-        _disguiseAvailable = false;
-
-        SkinnedMeshRenderer[] smrs = GetComponentsInChildren<SkinnedMeshRenderer>(true);
-        foreach (var smr in smrs)
-        {
-            string n = smr.name.ToLower();
-            if (n.Contains("torso") || n.Contains("shirt") || n.Contains("upper") || n.Contains("body"))
-            {
-                if (strippedTorsoMaterial != null)
-                {
-                    Material[] mats = smr.materials;
-                    for (int i = 0; i < mats.Length; i++) mats[i] = strippedTorsoMaterial;
-                    smr.materials = mats;
-                }
-                else
-                {
-                    Material[] mats = smr.materials;
-                    for (int i = 0; i < mats.Length; i++)
-                    {
-                        mats[i] = new Material(mats[i]) { color = new Color(0.3f, 0.3f, 0.3f, 1f) };
-                    }
-                    smr.materials = mats;
-                }
-            }
-        }
-    }
-
-    // ── Recovery ────────────────────────────────────────────────────────
-
-    private IEnumerator RecoverAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        Animator anim = _animator ?? GetComponentInChildren<Animator>(true);
-        FallGroundAnchor anchor = anim != null ? anim.gameObject.GetComponent<FallGroundAnchor>() : null;
-
-        if (anchor != null && anchor.IsFallen)
-            anchor.RestoreUpright(OnRecoveryComplete);
-        else
-            OnRecoveryComplete();
-    }
-
-    private void OnRecoveryComplete()
-    {
-        if (_agent != null)
-        {
-            _agent.enabled   = true;
-            _agent.isStopped = false;
-            _agent.speed     = walkSpeed;
-        }
-
-        _state = GuardState.Patrol;
-        _patrolForward = true;
-
-        Animator anim = _animator ?? GetComponentInChildren<Animator>(true);
-        if (anim != null && anim.runtimeAnimatorController != null)
-            anim.SetFloat("Speed", 0f);
-
-        if (patrolPoints != null && patrolPoints.Length > 0)
-        {
-            float best = float.MaxValue;
-            int idx = 0;
-            for (int i = 0; i < patrolPoints.Length; i++)
-            {
-                if (patrolPoints[i] == null) continue;
-                float d = Vector3.Distance(transform.position, patrolPoints[i].position);
-                if (d < best) { best = d; idx = i; }
-            }
-            _patrolIndex = idx;
-            SetDestination(patrolPoints[idx].position);
-        }
-    }
-
-    // ── Patrol / Investigate / Chase ────────────────────────────────────
 
     private void OnNoiseHeard(Vector3 position, float noiseRadius)
     {
@@ -379,10 +199,8 @@ public class GuardAI : MonoBehaviour
         SetDestination(player.position);
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= catchDistance)
-            TriggerTackle();
+            GameManager.TriggerLose();
     }
-
-    // ── Vision / Suspicion ──────────────────────────────────────────────
 
     private int GetPlayerVisionLevel()
     {
@@ -444,15 +262,10 @@ public class GuardAI : MonoBehaviour
             return;
         }
 
-        // Only build suspicion if not already chasing — once chasing, the
-        // tackle mechanic handles the outcome instead of auto-fail via suspicion.
-        if (_state != GuardState.Chase)
-        {
-            if (visionLevel == 2)
-                _disguiseSystem.AddSuspicion(fullSightSuspicionRate * Time.deltaTime, "Direct sight");
-            else if (visionLevel == 1)
-                _disguiseSystem.AddSuspicion(glimpseSuspicionRate * Time.deltaTime, "Peripheral glimpse");
-        }
+        if (visionLevel == 2)
+            _disguiseSystem.AddSuspicion(fullSightSuspicionRate * Time.deltaTime, "Direct sight");
+        else if (visionLevel == 1)
+            _disguiseSystem.AddSuspicion(glimpseSuspicionRate * Time.deltaTime, "Peripheral glimpse");
 
         float suspicion = _disguiseSystem.SuspicionNormalized;
 
