@@ -167,6 +167,9 @@ public class DisguiseSystem : MonoBehaviour
         IsDisguised = true;
         currentClearance = newClearance;
 
+        currentSuspicion = 0f;
+        _lastSuspicionIncreaseTime = Time.time;
+
         SetRenderersVisible(true);
         yield return new WaitForSeconds(0.3f);
 
