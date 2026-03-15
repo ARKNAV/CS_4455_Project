@@ -501,10 +501,15 @@ public class GuardAI : MonoBehaviour
             return;
         }
 
-        if (visionLevel == 2)
-            _disguiseSystem.AddSuspicion(fullSightSuspicionRate * Time.deltaTime, "Direct sight");
-        else if (visionLevel == 1)
-            _disguiseSystem.AddSuspicion(glimpseSuspicionRate * Time.deltaTime, "Peripheral glimpse");
+        // Only build suspicion if not already chasing — once chasing, the
+        // tackle mechanic handles the outcome instead of auto-fail via suspicion.
+        if (_state != GuardState.Chase)
+        {
+            if (visionLevel == 2)
+                _disguiseSystem.AddSuspicion(fullSightSuspicionRate * Time.deltaTime, "Direct sight");
+            else if (visionLevel == 1)
+                _disguiseSystem.AddSuspicion(glimpseSuspicionRate * Time.deltaTime, "Peripheral glimpse");
+        }
 
         float suspicion = _disguiseSystem.SuspicionNormalized;
 
