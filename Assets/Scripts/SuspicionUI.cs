@@ -9,6 +9,7 @@ public class SuspicionUI : MonoBehaviour
     public Text clearanceLabel;
     public Text alertStateLabel;
     public Text zoneLabel;
+    public Text disguiseLabel;
     public float barLerpSpeed = 8f;
 
     private float displayedSuspicion;
@@ -94,6 +95,26 @@ public class SuspicionUI : MonoBehaviour
             else
             {
                 clearanceLabel.text = "DISGUISE: <color=#667788>NONE</color>";
+            }
+        }
+
+        if (disguiseLabel != null)
+        {
+            if (disguiseSystem.IsDisguised && disguiseSystem.currentOutfit != null)
+            {
+                string outfitName = disguiseSystem.currentOutfit.name
+                    .Replace("DisguiseOutfit_", "")
+                    .Replace("_", " ")
+                    .ToUpper();
+                disguiseLabel.text = $"DISGUISE: <color=#88CCFF>{outfitName}</color>";
+            }
+            else if (disguiseSystem.IsChanging)
+            {
+                disguiseLabel.text = "DISGUISE: <color=#FFCC00>CHANGING...</color>";
+            }
+            else
+            {
+                disguiseLabel.text = "DISGUISE: <color=#667788>NONE</color>";
             }
         }
 
