@@ -23,13 +23,28 @@ public class BasicControlScript : MonoBehaviour
     public float airControlMultiplier = 0.35f;
     public float groundCheckDistance = 1.1f;
 
+    [Header("Jump Physics")]
+    [SerializeField] private float jumpImpulse = 7f;
+    [SerializeField] private bool useCustomAirGravity = true;
+    [SerializeField] private float ascendingGravityMultiplier = 1.15f;
+    [SerializeField] private float descendingGravityMultiplier = 2.2f;
+
     [Header("Audio")]
     [SerializeField] private AudioClip jumpClip;
+
+    [Header("Animation")]
+    [SerializeField] private bool driveJumpAnimation = true;
+    [SerializeField] private string jumpTriggerParameter = "Jump";
+    [SerializeField] private string groundedBoolParameter = "IsGrounded";
 
     private readonly HashSet<int> groundContacts = new HashSet<int>();
     private Vector3 desiredPlanarVelocity;
     private Vector3 currentPlanarVelocity;
     private bool hasGroundSupport;
+    private int jumpTriggerHash;
+    private int groundedBoolHash;
+    private bool hasJumpTrigger;
+    private bool hasGroundedBool;
 
     public bool IsGrounded
     {
@@ -76,6 +91,7 @@ public class BasicControlScript : MonoBehaviour
     void Start()
     {
         anim.applyRootMotion = false;
+        CacheAnimationParameters();
     }
 
     void Update()
@@ -130,8 +146,9 @@ public class BasicControlScript : MonoBehaviour
         if (cinput.Jump && hasGroundSupport)
         {
             rbody.linearVelocity = new Vector3(rbody.linearVelocity.x, 0f, rbody.linearVelocity.z);
-            rbody.AddForce(Vector3.up * 7f, ForceMode.Impulse);
+            rbody.AddForce(Vector3.up * jumpImpulse, ForceMode.Impulse);
             PlayClip(jumpClip);
+            TriggerJumpAnimation();
         }
     }
 
@@ -158,6 +175,8 @@ public class BasicControlScript : MonoBehaviour
             currentPlanarVelocity = Vector3.MoveTowards(planarVelocity, targetPlanarVelocity, maxStep);
         }
         rbody.linearVelocity = new Vector3(currentPlanarVelocity.x, rigidbodyVelocity.y, currentPlanarVelocity.z);
+
+        ApplyAirGravity();
 
         Vector3 facingDirection = hasMoveInput ? desiredPlanarVelocity : currentPlanarVelocity;
         facingDirection.y = 0f;
@@ -202,6 +221,11 @@ public class BasicControlScript : MonoBehaviour
 
         closeToJumpableGround = isCloseToGround;
         hasGroundSupport = IsGrounded || groundNear;
+
+        if (driveJumpAnimation && hasGroundedBool && anim != null)
+        {
+            anim.SetBool(groundedBoolHash, hasGroundSupport);
+        }
     }
 
     private bool TryRegisterGroundCollision(Collision collision)
@@ -230,5 +254,69 @@ public class BasicControlScript : MonoBehaviour
         {
             audioSource.PlayOneShot(clip);
         }
+    }
+
+    private void CacheAnimationParameters()
+    {
+        if (!driveJumpAnimation || anim == null || anim.runtimeAnimatorController == null)
+        {
+            return;
+        }
+
+        jumpTriggerHash = Animator.StringToHash(jumpTriggerParameter);
+        groundedBoolHash = Animator.StringToHash(groundedBoolParameter);
+
+        for (int i = 0; i < anim.parameters.Length; i++)
+        {
+            AnimatorControllerParameter parameter = anim.parameters[i];
+            if (parameter.nameHash == jumpTriggerHash && parameter.type == AnimatorControllerParameterType.Trigger)
+            {
+                hasJumpTrigger = true;
+            }
+
+            if (parameter.nameHash == groundedBoolHash && parameter.type == AnimatorControllerParameterType.Bool)
+            {
+                hasGroundedBool = true;
+            }
+        }
+
+        if (!hasJumpTrigger)
+        {
+            Debug.LogWarning($"BasicControlScript: Missing Trigger parameter '{jumpTriggerParameter}' on Animator.", this);
+        }
+
+        if (!hasGroundedBool)
+        {
+            Debug.LogWarning($"BasicControlScript: Missing Bool parameter '{groundedBoolParameter}' on Animator.", this);
+        }
+    }
+
+    private void TriggerJumpAnimation()
+    {
+        if (!driveJumpAnimation || anim == null || !hasJumpTrigger)
+        {
+            return;
+        }
+
+        anim.SetTrigger(jumpTriggerHash);
+    }
+
+    private void ApplyAirGravity()
+    {
+        if (!useCustomAirGravity || hasGroundSupport || !rbody.useGravity)
+        {
+            return;
+        }
+
+        float verticalSpeed = rbody.linearVelocity.y;
+        float multiplier = verticalSpeed >= 0f ? ascendingGravityMultiplier : descendingGravityMultiplier;
+
+        if (multiplier <= 1f)
+        {
+            return;
+        }
+
+        Vector3 extraGravity = Physics.gravity * (multiplier - 1f);
+        rbody.AddForce(extraGravity, ForceMode.Acceleration);
     }
 }

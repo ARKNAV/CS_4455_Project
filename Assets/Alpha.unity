@@ -1325,6 +1325,18 @@ PrefabInstance:
       value: Guard_SecurityTransit
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.199997
       objectReference: {fileID: 0}
@@ -3720,12 +3732,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
   walkVolume: 0.6
   runVolume: 0.8
-  walkClips:
-  - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
-  runClips:
-  - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
-  walkVolume: 0.6
-  runVolume: 0.8
   sprintFootstepInterval: 0.32
   sprintStepPairSpacing: 0.12
   sprintPairRecoveryDelay: 0.16
@@ -3859,7 +3865,14 @@ MonoBehaviour:
   deceleration: 22
   airControlMultiplier: 0.45
   groundCheckDistance: 1.25
+  jumpImpulse: 7
+  useCustomAirGravity: 1
+  ascendingGravityMultiplier: 1.15
+  descendingGravityMultiplier: 2.2
   jumpClip: {fileID: 8300000, guid: 9386dde5c61b5af4698ca7aaabbf7033, type: 3}
+  driveJumpAnimation: 1
+  jumpTriggerParameter: Jump
+  groundedBoolParameter: IsGrounded
 --- !u!114 &66678672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20587,7 +20600,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!1 &461877847
 GameObject:
@@ -31168,7 +31181,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 185.6
+      value: 166.86
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -31176,7 +31189,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 32.8
+      value: 44.96
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -38813,7 +38826,7 @@ Transform:
   m_GameObject: {fileID: 864976065}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.199997, y: -6.220175, z: 19.3}
+  m_LocalPosition: {x: -8.37, y: -6.220175, z: 53.86}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -41805,6 +41818,18 @@ PrefabInstance:
     - target: {fileID: 100154, guid: 6996385895b383749b266464bf872c69, type: 3}
       propertyPath: m_Name
       value: Guard_DockingEntrance
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
       propertyPath: m_LocalPosition.x
@@ -45638,6 +45663,18 @@ PrefabInstance:
       value: SkelMesh_Bodyguard_01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 38.4
       objectReference: {fileID: 0}
@@ -48488,7 +48525,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!4 &1125554319 stripped
 Transform:
@@ -52589,6 +52626,18 @@ PrefabInstance:
       value: SkelMesh_Bodyguard_01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 190
       objectReference: {fileID: 0}
@@ -54102,7 +54151,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!195 &1247200011
 NavMeshAgent:
@@ -57588,7 +57637,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!4 &1313696026 stripped
 Transform:
@@ -58022,7 +58071,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!195 &1317781559
 NavMeshAgent:
@@ -60283,7 +60332,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!1 &1374218145
 GameObject:
@@ -63595,8 +63644,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6529104, guid: 77c6276b63956c9439d917f842b9eeb0, type: 3}
+      propertyPath: m_Size.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529104, guid: 77c6276b63956c9439d917f842b9eeb0, type: 3}
+      propertyPath: m_Size.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529104, guid: 77c6276b63956c9439d917f842b9eeb0, type: 3}
       propertyPath: m_Size.z
-      value: 3
+      value: 4.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -74799,7 +74856,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!4 &1718535737 stripped
 Transform:
@@ -84532,7 +84589,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 2
   catchDistance: 1.5
 --- !u!4 &1950768911 stripped
 Transform:
@@ -92681,7 +92738,6 @@ SceneRoots:
   - {fileID: 798794935}
   - {fileID: 511472982}
   - {fileID: 971276961}
-  - {fileID: 297525402}
   - {fileID: 1611424818}
   - {fileID: 700000001}
   - {fileID: 2112313413}
