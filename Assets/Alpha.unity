@@ -13011,11 +13011,7 @@ Transform:
   m_Children:
   - {fileID: 1950768911}
   - {fileID: 622688653}
-<<<<<<< HEAD
   m_Father: {fileID: 1822498342}
-=======
-  m_Father: {fileID: 0}
->>>>>>> 22d5aaa2d0be1ab851b28083fd9a1986477b9e31
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &297525407
 AudioSource:
@@ -35758,17 +35754,8 @@ Transform:
   m_LocalPosition: {x: 177.8, y: 6.410175, z: 8.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-<<<<<<< HEAD
   m_Children: []
   m_Father: {fileID: 0}
-=======
-  m_Children:
-  - {fileID: 1247200014}
-  - {fileID: 1531781568}
-  - {fileID: 741471372}
-  - {fileID: 437940962}
-  m_Father: {fileID: 783909272}
->>>>>>> 22d5aaa2d0be1ab851b28083fd9a1986477b9e31
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &799429128
 PrefabInstance:
