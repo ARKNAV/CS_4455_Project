@@ -1,24 +1,32 @@
+using System.Collections;
 using UnityEngine;
 
 public class OnLoseTriggerScript : MonoBehaviour
 {
     public CanvasGroup loseCanvas;
+
+    [Tooltip("Delay in seconds before showing the lose screen, to allow animations to finish.")]
+    public float loseScreenDelay = 4.67f;
+
     void OnEnable()
     {
-        //print("enabled");
-        GameManager.LoseTriggerEvent += UnhideCanvas;
+        GameManager.LoseTriggerEvent += OnLose;
     }
 
-    // Update is called once per frame
     void OnDisable()
     {
-        //print("disabled");
-        GameManager.LoseTriggerEvent -= UnhideCanvas;
+        GameManager.LoseTriggerEvent -= OnLose;
     }
 
-    void UnhideCanvas()
+    void OnLose()
     {
-        //print("We got to the trigger");
+        StartCoroutine(ShowLoseScreenAfterDelay());
+    }
+
+    private IEnumerator ShowLoseScreenAfterDelay()
+    {
+        yield return new WaitForSeconds(loseScreenDelay);
+
         loseCanvas.interactable = true;
         loseCanvas.blocksRaycasts = true;
         loseCanvas.alpha = 1f;
