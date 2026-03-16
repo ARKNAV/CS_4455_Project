@@ -27267,7 +27267,7 @@ MonoBehaviour:
     text: 'Objective: Peek around the corner. Do not get caught.\n[Q] peek left 
       [E] peek right'
   - id: takedown
-    text: 'Objective: Take down the dock worker.\n[1] to pick up and throw'
+    text: 'Objective: Press ''F'' to take down the dock worker.'
   - id: disguise
     text: 'Objective: Swap into a disguise.\n[F] near a disguise box to equip'
   - id: idcard
