@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -36,12 +37,21 @@ public class GuardAI : MonoBehaviour
     private DisguiseSystem _disguiseSystem;
     private Vector3 _lastKnownPlayerPosition;
     private bool _isObserving;
+    private bool _isBeingTakenDown = false;
+    private bool _pinToGround = false;
+    private float _pinnedY;
+    private Animator _animator;
+
+    private static readonly int TakedownHash = Animator.StringToHash("Takedown");
+
+    public bool IsBeingTakenDown => _isBeingTakenDown;
 
     void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         if (_agent == null)
             _agent = gameObject.AddComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();
     }
 
     void OnEnable()
@@ -80,8 +90,20 @@ public class GuardAI : MonoBehaviour
         }
     }
 
+    void LateUpdate()
+    {
+        if (_pinToGround)
+        {
+            Vector3 pos = transform.position;
+            pos.y = _pinnedY;
+            transform.position = pos;
+        }
+    }
+
     void Update()
     {
+        if (_isBeingTakenDown) return;
+
         switch (_state)
         {
             case GuardState.Patrol:
@@ -102,6 +124,8 @@ public class GuardAI : MonoBehaviour
     {
         if (_state == GuardState.Chase) return;
 
+        bool isDisguised = _disguiseSystem != null && _disguiseSystem.IsDisguised;
+
         float dist = Vector3.Distance(transform.position, position);
         if (dist > baseHearingRadius || dist > noiseRadius) return;
 
@@ -117,7 +141,8 @@ public class GuardAI : MonoBehaviour
         }
         else if (_disguiseSystem != null)
         {
-            _disguiseSystem.AddSuspicion(faintNoiseSuspicion, "Faint noise");
+            if (!isDisguised)
+                _disguiseSystem.AddSuspicion(faintNoiseSuspicion, "Faint noise");
         }
         else
         {
@@ -199,7 +224,81 @@ public class GuardAI : MonoBehaviour
         SetDestination(player.position);
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= catchDistance)
-            GameManager.TriggerLose();
+        {
+            StartCoroutine(CatchPlayerRoutine());
+        }
+    }
+
+    private IEnumerator CatchPlayerRoutine()
+    {
+        if (_isBeingTakenDown) yield break;
+        _isBeingTakenDown = true;
+
+        GuardAI[] allGuards = FindObjectsByType<GuardAI>(FindObjectsSortMode.None);
+        foreach (GuardAI g in allGuards)
+        {
+            if (g == this || g == null) continue;
+            g.StopPursuit();
+        }
+
+        if (_agent != null && _agent.enabled && _agent.isOnNavMesh)
+            _agent.ResetPath();
+        if (_agent != null) _agent.enabled = false;
+
+        SetObserving(false);
+
+        if (_animator != null)
+        {
+            _animator.SetFloat("speed", 0f);
+            _animator.SetFloat("Speed", 0f);
+        }
+
+        if (player != null)
+        {
+            Animator playerAnimator = player.GetComponent<Animator>();
+            Rigidbody playerRb = player.GetComponent<Rigidbody>();
+            CharacterInputController inputCtrl = player.GetComponent<CharacterInputController>();
+            BasicControlScript controlScript = player.GetComponent<BasicControlScript>();
+
+            if (inputCtrl != null) inputCtrl.enabled = false;
+            if (controlScript != null) controlScript.enabled = false;
+
+            if (playerRb != null)
+            {
+                playerRb.isKinematic = true;
+                playerRb.linearVelocity = Vector3.zero;
+                playerRb.angularVelocity = Vector3.zero;
+            }
+
+            if (playerAnimator != null)
+            {
+                playerAnimator.SetFloat("speed", 0f);
+                playerAnimator.SetFloat("MoveX", 0f);
+                playerAnimator.SetFloat("MoveY", 0f);
+                playerAnimator.SetBool("isCrouching", false);
+                playerAnimator.SetBool("isSprinting", false);
+                playerAnimator.SetInteger("PeekDirection", 0);
+                playerAnimator.SetBool("IsPeeking", false);
+            }
+
+            yield return null;
+
+            if (playerAnimator != null)
+                playerAnimator.SetTrigger(TakedownHash);
+        }
+
+        GameManager.TriggerLose();
+    }
+
+    public void StopPursuit()
+    {
+        if (_isBeingTakenDown) return;
+        _state = GuardState.Patrol;
+        if (_agent != null && _agent.enabled && _agent.isOnNavMesh)
+            _agent.ResetPath();
+        _agent.speed = walkSpeed;
+        if (patrolPoints != null && patrolPoints.Length > 0 && patrolPoints[_patrolIndex] != null)
+            SetDestination(patrolPoints[_patrolIndex].position);
     }
 
     private int GetPlayerVisionLevel()
@@ -257,7 +356,7 @@ public class GuardAI : MonoBehaviour
 
         if (isDisguised)
         {
-            if (_state == GuardState.Chase && visionLevel >= 1)
+            if (_state == GuardState.Chase || _state == GuardState.Investigate)
                 ReturnToPatrol();
             return;
         }
@@ -363,5 +462,62 @@ public class GuardAI : MonoBehaviour
             t = t.parent;
         }
         return false;
+    }
+
+    public void OnTakedown(float duration)
+    {
+        if (_isBeingTakenDown) return;
+        StartCoroutine(TakedownRoutine(duration));
+    }
+
+    private IEnumerator TakedownRoutine(float duration)
+    {
+        _isBeingTakenDown = true;
+
+        if (_agent != null && _agent.enabled && _agent.isOnNavMesh)
+            _agent.ResetPath();
+        if (_agent != null) _agent.enabled = false;
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        SetObserving(false);
+
+        if (player != null)
+        {
+            Vector3 toPlayer = player.position - transform.position;
+            toPlayer.y = 0f;
+            if (toPlayer.sqrMagnitude > 0.001f)
+                transform.rotation = Quaternion.LookRotation(toPlayer.normalized);
+        }
+
+        if (_animator != null)
+        {
+            _animator.SetFloat("speed", 0f);
+            _animator.SetFloat("Speed", 0f);
+            _animator.SetBool("isCrouching", false);
+            _animator.SetBool("isSprinting", false);
+            _animator.SetInteger("PeekDirection", 0);
+            _animator.SetBool("IsPeeking", false);
+        }
+
+        _pinnedY = transform.position.y;
+        _pinToGround = true;
+
+        yield return null;
+
+        if (_animator != null)
+            _animator.SetTrigger(TakedownHash);
+
+        yield return new WaitForSeconds(duration);
+
+        _pinToGround = false;
+
+        gameObject.SetActive(false);
     }
 }

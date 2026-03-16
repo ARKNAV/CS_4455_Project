@@ -86,7 +86,7 @@ public class DemoObjectiveManager : MonoBehaviour
         {
             new DemoObjectiveStep { id = "crouch", text = "Objective: Crouch behind the large crate. [Left Ctrl / C] to crouch" },
             new DemoObjectiveStep { id = "peek", text = "Objective: Peek around the corner. Do not get caught.\n[Q] peek left  [E] peek right" },
-            new DemoObjectiveStep { id = "takedown", text = "Objective: Take down the dock worker.\n[1] to pick up and throw" },
+            new DemoObjectiveStep { id = "takedown", text = "Objective: Take down the dock worker.\nPress F to perform a takedown" },
             new DemoObjectiveStep { id = "disguise", text = "Objective: Swap into a disguise.\n[F] near a disguise box to equip" },
             new DemoObjectiveStep { id = "idcard", text = "Objective: Retrieve the Dock Supervisor ID Card from the locker.\n[F] to interact" },
             new DemoObjectiveStep { id = "exit", text = "Objective: Use the ID Card on the main door.\n[F] on the keycard reader" }

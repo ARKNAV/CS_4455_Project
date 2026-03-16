@@ -17,6 +17,10 @@ public class GuardAnimatorController : MonoBehaviour
 
     void Update()
     {
+        // Don't overwrite animator params during a takedown
+        GuardAI guardAI = GetComponent<GuardAI>();
+        if (guardAI != null && guardAI.IsBeingTakenDown) return;
+
         float speed = agent.velocity.magnitude;
         animator.SetFloat(speedParam, speed);
     }

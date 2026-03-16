@@ -1325,6 +1325,18 @@ PrefabInstance:
       value: Guard_SecurityTransit
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.199997
       objectReference: {fileID: 0}
@@ -3720,12 +3732,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
   walkVolume: 0.6
   runVolume: 0.8
-  walkClips:
-  - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
-  runClips:
-  - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
-  walkVolume: 0.6
-  runVolume: 0.8
   sprintFootstepInterval: 0.32
   sprintStepPairSpacing: 0.12
   sprintPairRecoveryDelay: 0.16
@@ -3859,7 +3865,14 @@ MonoBehaviour:
   deceleration: 22
   airControlMultiplier: 0.45
   groundCheckDistance: 1.25
+  jumpImpulse: 7
+  useCustomAirGravity: 1
+  ascendingGravityMultiplier: 1.15
+  descendingGravityMultiplier: 2.2
   jumpClip: {fileID: 8300000, guid: 9386dde5c61b5af4698ca7aaabbf7033, type: 3}
+  driveJumpAnimation: 1
+  jumpTriggerParameter: Jump
+  groundedBoolParameter: IsGrounded
 --- !u!114 &66678672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4016,6 +4029,22 @@ MonoBehaviour:
   baseNoiseRadius: 12
   crouchNoiseMultiplier: 0.35
   runNoiseMultiplier: 1.5
+--- !u!114 &66678685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66678666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 239ad7b0b8b1f424797cf3361e055e37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  takedownRange: 2
+  takedownHalfAngle: 100
+  takedownDuration: 4.67
+  playerAnimator: {fileID: 0}
 --- !u!4 &67408659 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
@@ -14949,8 +14978,6 @@ RectTransform:
   - {fileID: 1784059085}
   - {fileID: 240341802}
   - {fileID: 1159304622}
-  - {fileID: 613386307}
-  - {fileID: 481221943}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -20573,7 +20600,7 @@ MonoBehaviour:
   - {fileID: 1830678899}
   - {fileID: 1107658723}
   - {fileID: 134027154}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 15
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -20587,7 +20614,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!1 &461877847
 GameObject:
@@ -21624,12 +21651,12 @@ Transform:
   m_GameObject: {fileID: 481221942}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -326.5, y: -183.7, z: 0}
+  m_LocalPosition: {x: 77, y: 49.050003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2073232711}
-  m_Father: {fileID: 328495367}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &481221944
 MonoBehaviour:
@@ -23237,9 +23264,9 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516945014}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 577454463}
@@ -23247,9 +23274,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 326.5, y: 183.7}
-  m_SizeDelta: {x: 653, y: 367.4}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &516945016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23279,7 +23306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -25768,7 +25795,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 577454462}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -120}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25776,7 +25803,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 309, y: -38}
+  m_AnchoredPosition: {x: 303, y: -38}
   m_SizeDelta: {x: 600, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &577454464
@@ -25865,7 +25892,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 244.69374, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -25934,7 +25961,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -26}
+  m_AnchoredPosition: {x: 14, y: -31}
   m_SizeDelta: {x: 252, y: 8}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &584632537
@@ -27257,7 +27284,7 @@ MonoBehaviour:
     text: 'Objective: Peek around the corner. Do not get caught.\n[Q] peek left 
       [E] peek right'
   - id: takedown
-    text: 'Objective: Take down the dock worker.\n[1] to pick up and throw'
+    text: 'Objective: Press ''F'' to take down the dock worker.'
   - id: disguise
     text: 'Objective: Swap into a disguise.\n[F] near a disguise box to equip'
   - id: idcard
@@ -27282,12 +27309,12 @@ Transform:
   m_GameObject: {fileID: 613386305}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -326.5, y: -183.7, z: 0}
+  m_LocalPosition: {x: 77, y: 49.050003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 516945015}
-  m_Father: {fileID: 328495367}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &613417515 stripped
 Transform:
@@ -31168,7 +31195,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 185.6
+      value: 166.86
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -31176,7 +31203,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 32.8
+      value: 44.96
       objectReference: {fileID: 0}
     - target: {fileID: 403796, guid: a8db70ed00a022d4ca7f82df02fbc4fb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -38813,7 +38840,7 @@ Transform:
   m_GameObject: {fileID: 864976065}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.199997, y: -6.220175, z: 19.3}
+  m_LocalPosition: {x: -8.37, y: -6.220175, z: 53.86}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -41773,7 +41800,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 230c242fc95705747af37acedecacfd0, type: 3}
     m_FontSize: 11
     m_FontStyle: 0
     m_BestFit: 0
@@ -41805,6 +41832,18 @@ PrefabInstance:
     - target: {fileID: 100154, guid: 6996385895b383749b266464bf872c69, type: 3}
       propertyPath: m_Name
       value: Guard_DockingEntrance
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
       propertyPath: m_LocalPosition.x
@@ -45638,6 +45677,18 @@ PrefabInstance:
       value: SkelMesh_Bodyguard_01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 38.4
       objectReference: {fileID: 0}
@@ -48474,7 +48525,7 @@ MonoBehaviour:
   - {fileID: 2008748426}
   - {fileID: 1611965730}
   - {fileID: 598757076}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -48488,7 +48539,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1125554319 stripped
 Transform:
@@ -49590,7 +49641,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -84, y: -100}
+  m_AnchoredPosition: {x: -122, y: -31}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1144300692
@@ -50407,7 +50458,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 14, y: -10}
-  m_SizeDelta: {x: 126, y: 14}
+  m_SizeDelta: {x: 252, y: 28}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1158339412
 MonoBehaviour:
@@ -50430,7 +50481,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 230c242fc95705747af37acedecacfd0, type: 3}
     m_FontSize: 11
     m_FontStyle: 0
     m_BestFit: 0
@@ -52589,6 +52640,18 @@ PrefabInstance:
       value: SkelMesh_Bodyguard_01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 190
       objectReference: {fileID: 0}
@@ -54088,7 +54151,7 @@ MonoBehaviour:
   - {fileID: 973642356}
   - {fileID: 901331915}
   - {fileID: 1438596924}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 3
   player: {fileID: 66678677}
@@ -54102,7 +54165,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!195 &1247200011
 NavMeshAgent:
@@ -57574,7 +57637,7 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 930746928}
   - {fileID: 312408717}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 10
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -57588,7 +57651,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1313696026 stripped
 Transform:
@@ -58008,7 +58071,7 @@ MonoBehaviour:
   - {fileID: 1033345772}
   - {fileID: 890886788}
   - {fileID: 862094561}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 3
   player: {fileID: 66678677}
@@ -58022,7 +58085,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!195 &1317781559
 NavMeshAgent:
@@ -60269,7 +60332,7 @@ MonoBehaviour:
   - {fileID: 2029916492}
   - {fileID: 1405989432}
   - {fileID: 2094011713}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 10
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -60283,7 +60346,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!1 &1374218145
 GameObject:
@@ -63595,8 +63658,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6529104, guid: 77c6276b63956c9439d917f842b9eeb0, type: 3}
+      propertyPath: m_Size.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529104, guid: 77c6276b63956c9439d917f842b9eeb0, type: 3}
+      propertyPath: m_Size.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529104, guid: 77c6276b63956c9439d917f842b9eeb0, type: 3}
       propertyPath: m_Size.z
-      value: 3
+      value: 4.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -70540,6 +70611,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 66678683}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 66678685}
   m_SourcePrefab: {fileID: 100100000, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
 --- !u!1 &1611965729
 GameObject:
@@ -71443,7 +71517,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -74785,7 +74859,7 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 304372964}
   - {fileID: 119996809}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 10
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -74799,7 +74873,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1718535737 stripped
 Transform:
@@ -80540,7 +80614,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 230c242fc95705747af37acedecacfd0, type: 3}
     m_FontSize: 11
     m_FontStyle: 0
     m_BestFit: 0
@@ -82803,7 +82877,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 230c242fc95705747af37acedecacfd0, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -83987,7 +84061,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -14, y: -10}
+  m_AnchoredPosition: {x: 111.5, y: -17.5}
   m_SizeDelta: {x: 60, y: 14}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1936213507
@@ -84518,7 +84592,7 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 1644381538}
   - {fileID: 828612763}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -84532,7 +84606,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 5
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1950768911 stripped
 Transform:
@@ -89263,9 +89337,9 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073232710}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1144300691}
@@ -89273,9 +89347,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 326.5, y: 183.7}
-  m_SizeDelta: {x: 653, y: 367.4}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &2073232712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89305,7 +89379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -91451,6 +91525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loseCanvas: {fileID: 2124307558}
+  loseScreenDelay: 4.67
 --- !u!4 &2127318504 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
@@ -92681,11 +92756,12 @@ SceneRoots:
   - {fileID: 798794935}
   - {fileID: 511472982}
   - {fileID: 971276961}
-  - {fileID: 297525402}
   - {fileID: 1611424818}
   - {fileID: 700000001}
   - {fileID: 2112313413}
   - {fileID: 1318320515}
   - {fileID: 1897093247}
   - {fileID: 1636387881}
+  - {fileID: 481221943}
+  - {fileID: 613386307}
   - {fileID: 328495367}
