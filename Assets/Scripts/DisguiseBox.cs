@@ -129,6 +129,9 @@ public class DisguiseBox : MonoBehaviour
 
         _playerDisguiseSystem.ApplyDisguise(grantedClearance, disguiseOutfit);
 
+        if (DemoObjectiveManager.Instance != null)
+            DemoObjectiveManager.Instance.CompleteObjective("disguise");
+
         // Visually mark the box as used (open/empty look)
         if (_boxRenderer != null)
         {

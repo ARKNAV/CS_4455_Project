@@ -20602,7 +20602,7 @@ MonoBehaviour:
   - {fileID: 1830678899}
   - {fileID: 1107658723}
   - {fileID: 134027154}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 15
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -20616,7 +20616,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!1 &461877847
 GameObject:
@@ -48527,7 +48527,7 @@ MonoBehaviour:
   - {fileID: 2008748426}
   - {fileID: 1611965730}
   - {fileID: 598757076}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -48541,7 +48541,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1125554319 stripped
 Transform:
@@ -54153,7 +54153,7 @@ MonoBehaviour:
   - {fileID: 973642356}
   - {fileID: 901331915}
   - {fileID: 1438596924}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 3
   player: {fileID: 66678677}
@@ -54167,7 +54167,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!195 &1247200011
 NavMeshAgent:
@@ -57639,7 +57639,7 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 930746928}
   - {fileID: 312408717}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 10
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -57653,7 +57653,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1313696026 stripped
 Transform:
@@ -58073,7 +58073,7 @@ MonoBehaviour:
   - {fileID: 1033345772}
   - {fileID: 890886788}
   - {fileID: 862094561}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 3
   player: {fileID: 66678677}
@@ -58087,7 +58087,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!195 &1317781559
 NavMeshAgent:
@@ -60334,7 +60334,7 @@ MonoBehaviour:
   - {fileID: 2029916492}
   - {fileID: 1405989432}
   - {fileID: 2094011713}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 10
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -60348,7 +60348,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!1 &1374218145
 GameObject:
@@ -74861,7 +74861,7 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 304372964}
   - {fileID: 119996809}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 10
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -74875,7 +74875,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 50
   faintNoiseSuspicion: 25
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1718535737 stripped
 Transform:
@@ -84594,7 +84594,7 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 1644381538}
   - {fileID: 828612763}
-  walkSpeed: 2
+  walkSpeed: 1.5
   baseHearingRadius: 20
   investigateWaitTime: 2
   player: {fileID: 66678677}
@@ -84608,7 +84608,7 @@ MonoBehaviour:
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
-  runSpeed: 2
+  runSpeed: 1.5
   catchDistance: 1.5
 --- !u!4 &1950768911 stripped
 Transform:

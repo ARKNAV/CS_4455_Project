@@ -22,6 +22,7 @@ public class TakedownSystem : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
 
     private bool isTakingDown = false;
+    
 
     void Awake()
     {
@@ -121,6 +122,11 @@ public class TakedownSystem : MonoBehaviour
 
         // --- Only the guard plays the takedown animation and falls ---
         guard.OnTakedown(takedownDuration);
+
+        if (DemoObjectiveManager.Instance != null)
+        {
+            DemoObjectiveManager.Instance.CompleteObjective("takedown");
+        }
 
         yield return new WaitForSeconds(takedownDuration);
 

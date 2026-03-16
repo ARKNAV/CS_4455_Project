@@ -124,6 +124,8 @@ public class GuardAI : MonoBehaviour
     {
         if (_state == GuardState.Chase) return;
 
+        bool isDisguised = _disguiseSystem != null && _disguiseSystem.IsDisguised;
+
         float dist = Vector3.Distance(transform.position, position);
         if (dist > baseHearingRadius || dist > noiseRadius) return;
 
@@ -139,7 +141,8 @@ public class GuardAI : MonoBehaviour
         }
         else if (_disguiseSystem != null)
         {
-            _disguiseSystem.AddSuspicion(faintNoiseSuspicion, "Faint noise");
+            if (!isDisguised)
+                _disguiseSystem.AddSuspicion(faintNoiseSuspicion, "Faint noise");
         }
         else
         {
@@ -229,9 +232,8 @@ public class GuardAI : MonoBehaviour
     private IEnumerator CatchPlayerRoutine()
     {
         if (_isBeingTakenDown) yield break;
-        _isBeingTakenDown = true; // reuse flag to prevent re-entry
+        _isBeingTakenDown = true;
 
-        // --- Stop ALL guards from pursuing ---
         GuardAI[] allGuards = FindObjectsByType<GuardAI>(FindObjectsSortMode.None);
         foreach (GuardAI g in allGuards)
         {
@@ -239,21 +241,18 @@ public class GuardAI : MonoBehaviour
             g.StopPursuit();
         }
 
-        // Stop this guard
         if (_agent != null && _agent.enabled && _agent.isOnNavMesh)
             _agent.ResetPath();
         if (_agent != null) _agent.enabled = false;
 
         SetObserving(false);
 
-        // Stop guard animator (guard does NOT play takedown — guard stays standing)
         if (_animator != null)
         {
             _animator.SetFloat("speed", 0f);
             _animator.SetFloat("Speed", 0f);
         }
 
-        // --- Only the player plays the takedown animation ---
         if (player != null)
         {
             Animator playerAnimator = player.GetComponent<Animator>();
@@ -357,7 +356,7 @@ public class GuardAI : MonoBehaviour
 
         if (isDisguised)
         {
-            if (_state == GuardState.Chase && visionLevel >= 1)
+            if (_state == GuardState.Chase || _state == GuardState.Investigate)
                 ReturnToPatrol();
             return;
         }
@@ -475,12 +474,10 @@ public class GuardAI : MonoBehaviour
     {
         _isBeingTakenDown = true;
 
-        // Stop the guard from moving
         if (_agent != null && _agent.enabled && _agent.isOnNavMesh)
             _agent.ResetPath();
         if (_agent != null) _agent.enabled = false;
 
-        // Freeze rigidbody so guard doesn't slide or fall
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -491,7 +488,6 @@ public class GuardAI : MonoBehaviour
 
         SetObserving(false);
 
-        // Face the player
         if (player != null)
         {
             Vector3 toPlayer = player.position - transform.position;
@@ -500,7 +496,6 @@ public class GuardAI : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(toPlayer.normalized);
         }
 
-        // Clear all animator params that could block the Takedown trigger
         if (_animator != null)
         {
             _animator.SetFloat("speed", 0f);
@@ -511,11 +506,9 @@ public class GuardAI : MonoBehaviour
             _animator.SetBool("IsPeeking", false);
         }
 
-        // Pin guard Y in LateUpdate (runs after Animator applies body position)
         _pinnedY = transform.position.y;
         _pinToGround = true;
 
-        // Wait one frame for params to settle, then fire the trigger
         yield return null;
 
         if (_animator != null)
@@ -525,7 +518,6 @@ public class GuardAI : MonoBehaviour
 
         _pinToGround = false;
 
-        // Disable the guard after takedown
         gameObject.SetActive(false);
     }
 }
