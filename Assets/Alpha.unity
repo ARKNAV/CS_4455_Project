@@ -3717,10 +3717,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mode: 0
-  walkClips: []
-  runClips: []
-  walkVolume: 1
-  runVolume: 1.35
+  walkClips:
+  - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
+  runClips:
+  - {fileID: 8300000, guid: a89a281b3bcf41d44b3b880cde4c57db, type: 3}
+  walkVolume: 0.6
+  runVolume: 0.8
   sprintFootstepInterval: 0.32
   sprintStepPairSpacing: 0.12
   sprintPairRecoveryDelay: 0.16
@@ -3854,7 +3856,7 @@ MonoBehaviour:
   deceleration: 22
   airControlMultiplier: 0.45
   groundCheckDistance: 1.25
-  jumpClip: {fileID: 0}
+  jumpClip: {fileID: 8300000, guid: 9386dde5c61b5af4698ca7aaabbf7033, type: 3}
 --- !u!114 &66678672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13002,13 +13004,13 @@ Transform:
   m_GameObject: {fileID: 297525401}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -177.8, y: -6.410175, z: -8.7}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1950768911}
   - {fileID: 622688653}
-  m_Father: {fileID: 798794935}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &297525405
 NavMeshAgent:
@@ -13172,8 +13174,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9710ee7796c71432490aa24eb6623b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 0
-  walkClips: []
+  mode: 1
+  walkClips:
+  - {fileID: 8300000, guid: 9641e21e3382384428b4656e10b53da4, type: 3}
   runClips: []
   walkVolume: 1
   runVolume: 1.35
@@ -13182,15 +13185,15 @@ MonoBehaviour:
   sprintPairRecoveryDelay: 0.16
   sprintMinSpeed: 1.25
   minimumEmitSpacing: 0.08
-  guardFootstepClip: {fileID: 0}
+  guardFootstepClip: {fileID: 8300000, guid: 9641e21e3382384428b4656e10b53da4, type: 3}
   aiBaseVolume: 1
   aiMinSpeed: 0.05
   aiNearDistance: 2
   aiFarDistance: 18
   aiMinDistanceVolume: 0
   aiFootstepInterval: 0.42
-  listenerTarget: {fileID: 0}
-  aiDistanceTarget: {fileID: 0}
+  listenerTarget: {fileID: 66678677}
+  aiDistanceTarget: {fileID: 1950768911}
 --- !u!4 &297560775 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 497032, guid: b38a3290156af5046a449900e3163984, type: 3}
@@ -35977,7 +35980,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1247200014}
-  - {fileID: 297525402}
   - {fileID: 1531781568}
   - {fileID: 741471372}
   - {fileID: 437940962}
@@ -68322,8 +68324,8 @@ MonoBehaviour:
   pickupMessageDuration: 2
   disguiseRequiredMessage: You need a disguise to pick this up
   disguiseRequiredMessageDuration: 2
-  audioSource: {fileID: 0}
-  pickupClip: {fileID: 0}
+  audioSource: {fileID: 66678670}
+  pickupClip: {fileID: 8300000, guid: 52320e590bf774734a288886eba557ba, type: 3}
 --- !u!65 &1559638937
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -92119,11 +92121,11 @@ MonoBehaviour:
   needsCardMessage: You need to collect the key card first.
   accessGrantedMessage: Access granted. Door unlocked.
   feedbackDuration: 2
-  interactionAudioSource: {fileID: 0}
-  keypadSwipeClip: {fileID: 0}
-  accessDeniedClip: {fileID: 0}
-  accessGrantedClip: {fileID: 0}
-  doorOpenClip: {fileID: 0}
+  interactionAudioSource: {fileID: 66678670}
+  keypadSwipeClip: {fileID: 8300000, guid: 81652031b64c342cc8dbc59c138d77c5, type: 3}
+  accessDeniedClip: {fileID: 8300000, guid: df729d213c4be44a9b55cd109f5cd4f9, type: 3}
+  accessGrantedClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  doorOpenClip: {fileID: 8300000, guid: 4e1ff8faed12a475eba9be0e46072269, type: 3}
   completeExitObjectiveOnSuccess: 1
   exitObjectiveId: exit
 --- !u!65 &2137007315
@@ -92903,6 +92905,7 @@ SceneRoots:
   - {fileID: 783909272}
   - {fileID: 511472982}
   - {fileID: 971276961}
+  - {fileID: 297525402}
   - {fileID: 1611424818}
   - {fileID: 700000001}
   - {fileID: 2112313413}
