@@ -56,6 +56,17 @@ public class DisguiseSystem : MonoBehaviour
     [Tooltip("Delay before suspicion starts decaying after last increase")]
     public float suspicionDecayDelay = 2f;
 
+    [Header("Suspicion Audio Cues")]
+    [SerializeField] private AudioSource suspicionAudioSource;
+    [SerializeField] private AudioClip lowSuspicionClip;
+    [SerializeField] private AudioClip mediumSuspicionClip;
+    [SerializeField] private AudioClip highSuspicionClip;
+    [SerializeField] private AudioClip calmDownClip;
+    [SerializeField] [Range(0f, 1f)] private float suspicionCueVolume = 0.7f;
+    [SerializeField] [Range(0f, 1f)] private float lowSuspicionThreshold = 0.2f;
+    [SerializeField] [Range(0f, 1f)] private float mediumSuspicionThreshold = 0.5f;
+    [SerializeField] [Range(0f, 1f)] private float highSuspicionThreshold = 0.8f;
+
     /// <summary>Whether the player is currently disguised.</summary>
     public bool IsDisguised { get; private set; }
 
@@ -83,6 +94,15 @@ public class DisguiseSystem : MonoBehaviour
     private float _loiterTimer;
     private int _observerCount;
     private bool _missionFailTriggered;
+    private SuspicionAudioTier _lastAudioTier = SuspicionAudioTier.None;
+
+    private enum SuspicionAudioTier
+    {
+        None = 0,
+        Low = 1,
+        Medium = 2,
+        High = 3
+    }
 
     // ────────────────────────────────────────────
     //  Unity Lifecycle
@@ -94,6 +114,7 @@ public class DisguiseSystem : MonoBehaviour
         _inputController = GetComponent<CharacterInputController>();
         _controlScript = GetComponent<BasicControlScript>();
         _rb = GetComponent<Rigidbody>();
+        suspicionAudioSource = ResolveSuspicionAudioSource();
 
         CacheOriginalMaterials();
     }
@@ -120,6 +141,7 @@ public class DisguiseSystem : MonoBehaviour
         UpdateSuspicionDecay();
 
         currentSuspicion = Mathf.Clamp(currentSuspicion, 0f, 100f);
+        UpdateSuspicionAudioTier();
 
         if (currentSuspicion >= 100f && !_missionFailTriggered)
         {
@@ -297,6 +319,26 @@ public class DisguiseSystem : MonoBehaviour
         currentSuspicion = Mathf.Max(0f, currentSuspicion - amount);
     }
 
+    private void UpdateSuspicionAudioTier()
+    {
+        SuspicionAudioTier currentTier = GetCurrentAudioTier();
+        if (currentTier == _lastAudioTier)
+        {
+            return;
+        }
+
+        if (currentTier > _lastAudioTier)
+        {
+            PlaySuspicionCueForTier(currentTier);
+        }
+        else if (currentTier == SuspicionAudioTier.None)
+        {
+            PlaySuspicionCue(calmDownClip);
+        }
+
+        _lastAudioTier = currentTier;
+    }
+
     private void UpdateSuspicionDecay()
     {
         if (Time.time - _lastSuspicionIncreaseTime > suspicionDecayDelay)
@@ -342,6 +384,72 @@ public class DisguiseSystem : MonoBehaviour
     }
 
     public SecurityZone CurrentZone => _currentZone;
+
+    private AudioSource ResolveSuspicionAudioSource()
+    {
+        if (suspicionAudioSource != null)
+        {
+            return suspicionAudioSource;
+        }
+
+        AudioSource existingSource = GetComponent<AudioSource>();
+        if (existingSource != null)
+        {
+            return existingSource;
+        }
+
+        AudioSource createdSource = gameObject.AddComponent<AudioSource>();
+        createdSource.playOnAwake = false;
+        createdSource.spatialBlend = 0f;
+        return createdSource;
+    }
+
+    private SuspicionAudioTier GetCurrentAudioTier()
+    {
+        float normalizedSuspicion = SuspicionNormalized;
+        if (normalizedSuspicion >= highSuspicionThreshold)
+        {
+            return SuspicionAudioTier.High;
+        }
+
+        if (normalizedSuspicion >= mediumSuspicionThreshold)
+        {
+            return SuspicionAudioTier.Medium;
+        }
+
+        if (normalizedSuspicion >= lowSuspicionThreshold)
+        {
+            return SuspicionAudioTier.Low;
+        }
+
+        return SuspicionAudioTier.None;
+    }
+
+    private void PlaySuspicionCueForTier(SuspicionAudioTier tier)
+    {
+        switch (tier)
+        {
+            case SuspicionAudioTier.Low:
+                PlaySuspicionCue(lowSuspicionClip);
+                break;
+            case SuspicionAudioTier.Medium:
+                PlaySuspicionCue(mediumSuspicionClip);
+                break;
+            case SuspicionAudioTier.High:
+                PlaySuspicionCue(highSuspicionClip);
+                break;
+        }
+    }
+
+    private void PlaySuspicionCue(AudioClip clip)
+    {
+        if (suspicionAudioSource == null || clip == null)
+        {
+            return;
+        }
+
+        suspicionAudioSource.PlayOneShot(clip, suspicionCueVolume);
+    }
 
     // ────────────────────────────────────────────
     //  Material Swap (Visual)

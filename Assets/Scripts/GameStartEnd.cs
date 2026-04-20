@@ -3,17 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class GameStartEnd : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField] private string gameplaySceneName = "alpha copy";
 
      public void QuitGame()
     {
@@ -26,9 +16,17 @@ public class GameStartEnd : MonoBehaviour
 
     public void StartGame()
     {
-        //print("game start");
-        
-        SceneManager.LoadScene("Alpha");
         Time.timeScale = 1f;
+
+        Scene activeScene = SceneManager.GetActiveScene();
+        bool isTitleScreen = string.Equals(activeScene.name, "TitleScreen", System.StringComparison.OrdinalIgnoreCase);
+
+        if (isTitleScreen)
+        {
+            SceneManager.LoadScene(gameplaySceneName);
+            return;
+        }
+
+        SceneManager.LoadScene(activeScene.buildIndex);
     }
 }
