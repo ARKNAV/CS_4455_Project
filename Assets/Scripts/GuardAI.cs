@@ -45,6 +45,9 @@ public class GuardAI : MonoBehaviour
     private static readonly int TakedownHash = Animator.StringToHash("Takedown");
 
     public bool IsBeingTakenDown => _isBeingTakenDown;
+    public bool IsChasing => _state == GuardState.Chase;
+    public bool IsInvestigating => _state == GuardState.Investigate;
+    public bool IsSuspicious => _state != GuardState.Patrol;
 
     void Awake()
     {
@@ -52,16 +55,21 @@ public class GuardAI : MonoBehaviour
         if (_agent == null)
             _agent = gameObject.AddComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
+
+        if (GetComponent<GuardSuspicionMarker>() == null)
+            gameObject.AddComponent<GuardSuspicionMarker>();
     }
 
     void OnEnable()
     {
         EventManager.AddListener<NoiseEmittedEvent, Vector3, float>(OnNoiseHeard);
+        EventManager.AddListener<GlobalChaseCascadeEvent>(OnGlobalChaseCascade);
     }
 
     void OnDisable()
     {
         EventManager.RemoveListener<NoiseEmittedEvent, Vector3, float>(OnNoiseHeard);
+        EventManager.RemoveListener<GlobalChaseCascadeEvent>(OnGlobalChaseCascade);
         SetObserving(false);
     }
 
@@ -343,14 +351,7 @@ public class GuardAI : MonoBehaviour
         if (_disguiseSystem == null)
         {
             if (visionLevel >= 2)
-            {
-                if (_state != GuardState.Chase)
-                {
-                    _state = GuardState.Chase;
-                    _agent.speed = runSpeed;
-                }
-                if (player != null) SetDestination(player.position);
-            }
+                BeginChase(player != null ? player.position : _lastKnownPlayerPosition, fromCascade: false);
             return;
         }
 
@@ -370,12 +371,11 @@ public class GuardAI : MonoBehaviour
 
         if (suspicion >= 0.8f)
         {
-            if (_state != GuardState.Chase)
-            {
-                _state = GuardState.Chase;
-                _agent.speed = runSpeed;
-            }
-            SetDestination(visionLevel >= 1 && player != null ? player.position : _lastKnownPlayerPosition);
+            bool alreadyChasing = _state == GuardState.Chase;
+            Vector3 target = (alreadyChasing || visionLevel >= 1) && player != null
+                ? player.position
+                : _lastKnownPlayerPosition;
+            BeginChase(target, fromCascade: false);
         }
         else if (suspicion >= 0.2f)
         {
@@ -446,6 +446,34 @@ public class GuardAI : MonoBehaviour
     {
         if (_agent != null && _agent.isOnNavMesh)
             _agent.SetDestination(worldPosition);
+    }
+
+    private void BeginChase(Vector3 target, bool fromCascade)
+    {
+        if (_isBeingTakenDown) return;
+        if (!CanQueryAgentPath()) return;
+        if (player == null) return;
+
+        bool alreadyChasing = _state == GuardState.Chase;
+        if (!alreadyChasing)
+        {
+            _state = GuardState.Chase;
+            _agent.speed = runSpeed;
+        }
+
+        _lastKnownPlayerPosition = target;
+        SetDestination(target);
+
+        if (!alreadyChasing && !fromCascade)
+            EventManager.TriggerEvent<GlobalChaseCascadeEvent>();
+    }
+
+    private void OnGlobalChaseCascade()
+    {
+        if (_isBeingTakenDown) return;
+        if (player == null) return;
+        if (_state == GuardState.Chase) return;
+        BeginChase(player.position, fromCascade: true);
     }
 
     private bool CanQueryAgentPath()
