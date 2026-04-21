@@ -8,12 +8,14 @@ public class OnWinTriggerScript : MonoBehaviour
     {
         //print("enabled");
         KeycardReaderController.WinTriggerEvent += UnhideCanvas;
+        BlueprintConsoleController.WinTriggerEvent += UnhideCanvas;
     }
 
     void OnDisable()
     {
         //print("disabled");
         KeycardReaderController.WinTriggerEvent -= UnhideCanvas;
+        BlueprintConsoleController.WinTriggerEvent -= UnhideCanvas;
     }
 
 //This is a little silly looking but i had to let the door finish its animation so im using WaitForSeconds()

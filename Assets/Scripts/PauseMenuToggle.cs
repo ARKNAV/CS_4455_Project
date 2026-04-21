@@ -24,6 +24,16 @@ public class PauseMenuToggle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (ExitConsoleInteraction.IsConsoleInteractionActive || LeftQuadrantStabilityConsole.IsPuzzleInteractionActive)
+        {
+            return;
+        }
+
+        if (Time.frameCount == LeftQuadrantStabilityConsole.LastPuzzleCloseFrame)
+        {
+            return;
+        }
+
         if (Keyboard.current.escapeKey.wasPressedThisFrame && isPauseMenu == true) {
             if (canvasGroup.interactable) {
                 canvasGroup.interactable = false;
