@@ -271,7 +271,7 @@ public class KeycardReaderController : MonoBehaviour
             }
         }
 
-        WinTriggerEvent.Invoke();
+        WinTriggerEvent?.Invoke();
     }
 
     private void QueueReaderIdleReset()

@@ -210,7 +210,16 @@ public class DemoObjectiveManager : MonoBehaviour
             rect.anchoredPosition = hudOffset;
             rect.sizeDelta = new Vector2(900f, 120f);
 
-            objectiveTextLegacy.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            Font builtInFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            if (builtInFont == null)
+            {
+                Debug.LogWarning("DemoObjectiveManager could not load built-in Arial font. Assign a TMP/legacy objective text in the Inspector.");
+                Destroy(textGo);
+                objectiveTextLegacy = null;
+                return;
+            }
+
+            objectiveTextLegacy.font = builtInFont;
             objectiveTextLegacy.fontSize = fontSize;
             objectiveTextLegacy.color = textColor;
             objectiveTextLegacy.alignment = TextAnchor.UpperLeft;

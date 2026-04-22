@@ -99,7 +99,16 @@ public class InteractionFeedbackHUD : MonoBehaviour
         textGo.transform.SetParent(cachedCanvas.transform, false);
 
         feedbackTextLegacy = textGo.AddComponent<Text>();
-        feedbackTextLegacy.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        Font builtInFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        if (builtInFont == null)
+        {
+            Debug.LogWarning("InteractionFeedbackHUD could not load built-in Arial font. Assign a TMP/legacy HUD text in the Inspector.");
+            Destroy(textGo);
+            feedbackTextLegacy = null;
+            return;
+        }
+
+        feedbackTextLegacy.font = builtInFont;
         feedbackTextLegacy.fontSize = fontSize;
         feedbackTextLegacy.color = defaultTextColor;
         feedbackTextLegacy.alignment = TextAnchor.UpperRight;
