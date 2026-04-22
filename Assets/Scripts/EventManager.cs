@@ -8,6 +8,7 @@ public struct SuspicionChangedEvent { }
 public struct ZoneViolationEvent { }
 public struct DisguiseChangedEvent { }
 public struct MissionFailEvent { }
+public struct GlobalChaseCascadeEvent { }
 
 public static class EventManager
 {
