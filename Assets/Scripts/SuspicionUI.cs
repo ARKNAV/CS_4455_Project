@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SuspicionUI : MonoBehaviour
 {
     public DisguiseSystem disguiseSystem;
     public RectTransform suspicionFill;
     public Image suspicionFillImage;
-    public Text clearanceLabel;
+    public TextMeshProUGUI disguiseLabel;
     public Text alertStateLabel;
     public Text zoneLabel;
     public float barLerpSpeed = 8f;
@@ -21,7 +22,7 @@ public class SuspicionUI : MonoBehaviour
         if (suspicionFill == null)
             FindFillByName("SuspicionFill");
 
-        if (alertStateLabel == null || clearanceLabel == null)
+        if (alertStateLabel == null)
             FindLabelsByName();
 
         displayedSuspicion = 0f;
@@ -53,10 +54,6 @@ public class SuspicionUI : MonoBehaviour
         GameObject suspicionLabel = GameObject.Find("SuspicionLabel");
         if (suspicionLabel != null && alertStateLabel == null)
             alertStateLabel = suspicionLabel.GetComponent<Text>();
-
-        GameObject disguiseLabel = GameObject.Find("DisguiseLabel");
-        if (disguiseLabel != null && clearanceLabel == null)
-            clearanceLabel = disguiseLabel.GetComponent<Text>();
     }
 
     private void UpdateSuspicionBar()
@@ -84,18 +81,17 @@ public class SuspicionUI : MonoBehaviour
 
     private void UpdateLabels()
     {
-        if (clearanceLabel != null)
-        {
+
             if (disguiseSystem.IsDisguised)
             {
                 string cl = GetGuardLabel(disguiseSystem.CurrentClearance).ToUpper();
-                clearanceLabel.text = $"DISGUISE: <color=#88CCFF>{cl}</color>";
+                disguiseLabel.text = $"Disguise: <color=#88CCFF>{cl}</color>";
             }
             else
             {
-                clearanceLabel.text = "DISGUISE: <color=#667788>NONE</color>";
+                disguiseLabel.text = "Disguise: <color=#667788>NONE</color>";
             }
-        }
+
 
         if (alertStateLabel != null)
         {
