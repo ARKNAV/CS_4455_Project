@@ -8093,6 +8093,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Corridor_B_14
       objectReference: {fileID: 0}
+    - target: {fileID: 457508, guid: f18932879bb23b84ca5370b65419ee41, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4
+      objectReference: {fileID: 0}
     - target: {fileID: 498868, guid: f18932879bb23b84ca5370b65419ee41, type: 3}
       propertyPath: m_LocalPosition.x
       value: 181.01646
