@@ -4118,11 +4118,11 @@ MonoBehaviour:
   currentSuspicion: 0
   suspicionDecayRate: 5
   suspicionDecayDelay: 2
-  suspicionAudioSource: {fileID: 0}
-  lowSuspicionClip: {fileID: 0}
-  mediumSuspicionClip: {fileID: 0}
-  highSuspicionClip: {fileID: 0}
-  calmDownClip: {fileID: 0}
+  suspicionAudioSource: {fileID: 66678670}
+  lowSuspicionClip: {fileID: 8300000, guid: 3becec1909f194046945d85ac1077772, type: 3}
+  mediumSuspicionClip: {fileID: 8300000, guid: 0994c12e202f342459a4212e7287f7e8, type: 3}
+  highSuspicionClip: {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
+  calmDownClip: {fileID: 8300000, guid: 130a177e727814a2ea78a886ab72213d, type: 3}
   suspicionCueVolume: 0.7
   lowSuspicionThreshold: 0.2
   mediumSuspicionThreshold: 0.5
@@ -92258,8 +92258,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89fdd26b944b648a281dce32817962dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundMusicClip: {fileID: 0}
-  backgroundMusicVolume: 0.3
+  backgroundMusicClip: {fileID: 8300000, guid: ab6a92ee3bea3f34caa9aa378465db46, type: 3}
+  backgroundMusicVolume: 0.051
   loopBackgroundMusic: 1
   playMusicOnAwake: 1
   failReloadDelay: 2
