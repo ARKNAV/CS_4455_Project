@@ -22,6 +22,10 @@ public class SecurityZone : MonoBehaviour
     [Tooltip("Extra suspicion per second when sprinting in this restricted zone")]
     public float sprintSuspicionRate = 20f;
 
+    [Tooltip("Multiplier applied to wrong-clearance suspicion (continuous tick and immediate-entry bump). 0 disables wrong-clearance suspicion entirely; 1 preserves the original full rate.")]
+    [Range(0f, 1f)]
+    public float wrongClearanceSuspicionScale = 0.2f;
+
     [Tooltip("If true, entering this zone with wrong clearance immediately triggers investigation")]
     public bool immediateInvestigation = false;
 
@@ -49,10 +53,10 @@ public class SecurityZone : MonoBehaviour
     {
         if (!playerInZone || playerDisguise == null) return;
 
-        // Wrong clearance → continuous suspicion
-        if (playerDisguise.CurrentClearance < requiredClearance)
+        // Wrong clearance → continuous suspicion (scaled down; 0 fully suppresses)
+        if (playerDisguise.CurrentClearance < requiredClearance && wrongClearanceSuspicionScale > 0f)
         {
-            float suspicionAmount = suspicionRatePerSecond * Time.deltaTime;
+            float suspicionAmount = suspicionRatePerSecond * wrongClearanceSuspicionScale * Time.deltaTime;
             EventManager.TriggerEvent<SuspicionChangedEvent, float, string>(
                 suspicionAmount,
                 $"Wrong clearance for {zoneName}");
@@ -89,10 +93,10 @@ public class SecurityZone : MonoBehaviour
             EventManager.TriggerEvent<ZoneViolationEvent, SecurityClearance, string>(
                 requiredClearance, zoneName);
 
-            if (immediateInvestigation)
+            if (immediateInvestigation && wrongClearanceSuspicionScale > 0f)
             {
                 EventManager.TriggerEvent<SuspicionChangedEvent, float, string>(
-                    30f, $"Unauthorized entry to {zoneName}");
+                    30f * wrongClearanceSuspicionScale, $"Unauthorized entry to {zoneName}");
             }
         }
     }
