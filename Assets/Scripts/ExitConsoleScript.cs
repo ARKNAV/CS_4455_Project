@@ -45,6 +45,10 @@ public class ExitConsoleInteraction : MonoBehaviour
     public DoorProximityTrigger linkedDoorTrigger;
     public float autoFindDoorMaxDistance = 12f;
 
+    [Header("Objective (Optional)")]
+    public bool completeObjectiveOnSuccess = false;
+    public string successObjectiveId = "exit";
+
     private GameObject player;
     private bool isUIVisible = false;
     private bool promptVisible = false;
@@ -285,6 +289,8 @@ public class ExitConsoleInteraction : MonoBehaviour
     {
         interactionBusy = true;
 
+        CompleteSuccessObjective();
+
         if (unlockDoorOnSuccess)
         {
             Debug.Log($"ExitConsoleInteraction: unlockDoorOnSuccess is TRUE. Linked trigger: {(linkedDoorTrigger != null ? linkedDoorTrigger.name : "<null>")}", this);
@@ -312,6 +318,25 @@ public class ExitConsoleInteraction : MonoBehaviour
         }
 
         yield return StartCoroutine(CloseConsoleFlow());
+    }
+
+    private void CompleteSuccessObjective()
+    {
+        if (!completeObjectiveOnSuccess || string.IsNullOrWhiteSpace(successObjectiveId))
+        {
+            return;
+        }
+
+        DemoObjectiveManager manager = DemoObjectiveManager.Instance;
+        if (manager == null)
+        {
+            return;
+        }
+
+        if (manager.IsCurrentObjective(successObjectiveId))
+        {
+            manager.CompleteObjective(successObjectiveId);
+        }
     }
 
     private void UnlockDoorFromConsole()
