@@ -45903,6 +45903,19 @@ MonoBehaviour:
   playerAnimator: {fileID: 66678678}
   victoryTriggerName: Victory
   delayBeforeWinEvent: 1
+--- !u!114 &953040677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953040671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22ed1e7d8a478f544884c5cdac2a151c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  winCanvas: {fileID: 478271520}
 --- !u!1001 &953480434
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -76322,6 +76335,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 122154, guid: 3517d6179b17d7d41b2ab3881cb2cd67, type: 3}
       insertIndex: -1
       addedObject: {fileID: 953040675}
+    - targetCorrespondingSourceObject: {fileID: 122154, guid: 3517d6179b17d7d41b2ab3881cb2cd67, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 953040677}
     - targetCorrespondingSourceObject: {fileID: 188734, guid: 3517d6179b17d7d41b2ab3881cb2cd67, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1554726651}
