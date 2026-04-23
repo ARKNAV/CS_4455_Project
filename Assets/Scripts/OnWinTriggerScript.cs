@@ -7,14 +7,12 @@ public class OnWinTriggerScript : MonoBehaviour
     void OnEnable()
     {
         //print("enabled");
-        KeycardReaderController.WinTriggerEvent += UnhideCanvas;
         BlueprintConsoleController.WinTriggerEvent += UnhideCanvas;
     }
 
     void OnDisable()
     {
         //print("disabled");
-        KeycardReaderController.WinTriggerEvent -= UnhideCanvas;
         BlueprintConsoleController.WinTriggerEvent -= UnhideCanvas;
     }
 
