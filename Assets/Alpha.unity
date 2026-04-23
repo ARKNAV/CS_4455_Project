@@ -14927,6 +14927,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 3
+  enforceCurrentZoneClearance: 1
 --- !u!1001 &293507758
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32650,6 +32652,43 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 4
   catchDistance: 1.5
+  minimumTrustedClearance: 4
+  enforceCurrentZoneClearance: 1
+--- !u!114 &656178044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656178040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bff060d8aec3841448535281fff33b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedParam: speed
+--- !u!195 &656178045
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656178040}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &656475430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57471,6 +57510,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 3
+  enforceCurrentZoneClearance: 1
 --- !u!1001 &1177442299
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -65836,6 +65877,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
       insertIndex: -1
       addedObject: {fileID: 656178042}
+    - targetCorrespondingSourceObject: {fileID: 100154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 656178045}
+    - targetCorrespondingSourceObject: {fileID: 100154, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 656178044}
   m_SourcePrefab: {fileID: 100100000, guid: 69e0bf832ba8212478b45616cc569f75, type: 3}
 --- !u!1001 &1329688575
 PrefabInstance:
@@ -75972,7 +76019,7 @@ MonoBehaviour:
   baseHearingRadius: 20
   investigateWaitTime: 2
   player: {fileID: 66678677}
-  viewDistance: 20
+  viewDistance: 5
   fovDegrees: 90
   visionBlockers:
     serializedVersion: 2
@@ -103551,10 +103598,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36cda1a1ead175d489530feb7886ea79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disguiseName: Bodyguard Mesh 02 Torso
-  grantedClearance: 2
-  disguiseOutfit: {fileID: 11400000, guid: ef8f2f7e380f4f5a9f7bc761f95c763f, type: 2}
-  isUsed: 0
+  disguiseName: Bodyguard Mesh 03
+  grantedClearance: 3
+  disguiseOutfit: {fileID: 11400000, guid: 3c4f12722bf84a629eb4f03eec9fb0cf, type: 2}
+  isUsed: 1
   glowColor: {r: 0.2, g: 0.8, b: 1, a: 0.5}
 --- !u!65 &2111759201
 BoxCollider:
@@ -103586,7 +103633,7 @@ Transform:
   m_GameObject: {fileID: 2111759198}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.800003, y: -6.220175, z: -41.88}
+  m_LocalPosition: {x: -15.44, y: -6.220175, z: -92.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

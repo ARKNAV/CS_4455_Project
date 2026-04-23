@@ -67,6 +67,7 @@ public class BlueprintConsoleController : MonoBehaviour
     private bool promptVisible;
     private bool used;
     private bool interactionBusy;
+    private bool missionFailed;
     private Tween scanLineTween;
     private int victoryTriggerHash;
     private bool[] cachedCanvasStates;
@@ -97,6 +98,11 @@ public class BlueprintConsoleController : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        GameManager.LoseTriggerEvent += OnMissionFailed;
+    }
+
     private void Reset()
     {
         Collider triggerCollider = GetComponent<Collider>();
@@ -105,6 +111,12 @@ public class BlueprintConsoleController : MonoBehaviour
 
     private void Update()
     {
+        if (missionFailed)
+        {
+            HidePrompt();
+            return;
+        }
+
         if (used || interactionBusy)
         {
             HidePrompt();
@@ -193,6 +205,11 @@ public class BlueprintConsoleController : MonoBehaviour
 
     private IEnumerator TryUseConsoleFlow()
     {
+        if (missionFailed)
+        {
+            yield break;
+        }
+
         interactionBusy = true;
 
         PlayerInventory inventory = PlayerInventory.Instance;
@@ -243,6 +260,12 @@ public class BlueprintConsoleController : MonoBehaviour
         if (playDownloadAnimation)
         {
             yield return StartCoroutine(PlayBlueprintDownloadSequence());
+        }
+
+        if (missionFailed || (GameManager.Instance != null && GameManager.Instance.MissionFailed))
+        {
+            interactionBusy = false;
+            yield break;
         }
 
         TryPlayVictoryAnimation();
@@ -605,6 +628,8 @@ public class BlueprintConsoleController : MonoBehaviour
 
     private void OnDisable()
     {
+        GameManager.LoseTriggerEvent -= OnMissionFailed;
+
         RestoreOtherPanelsVisibility();
 
         if (scanLineTween != null)
@@ -614,5 +639,36 @@ public class BlueprintConsoleController : MonoBehaviour
         }
 
         DOTween.Kill(this);
+    }
+
+    private void OnMissionFailed()
+    {
+        missionFailed = true;
+        interactionBusy = false;
+        HidePrompt();
+
+        StopAllCoroutines();
+        ForceCloseBlueprintOverlay();
+    }
+
+    private void ForceCloseBlueprintOverlay()
+    {
+        if (scanLineTween != null)
+        {
+            scanLineTween.Kill();
+            scanLineTween = null;
+        }
+
+        DOTween.Kill(this);
+
+        if (blueprintDownloadCanvas != null)
+        {
+            blueprintDownloadCanvas.alpha = 0f;
+            blueprintDownloadCanvas.interactable = false;
+            blueprintDownloadCanvas.blocksRaycasts = false;
+            blueprintDownloadCanvas.gameObject.SetActive(false);
+        }
+
+        RestoreOtherPanelsVisibility();
     }
 }
