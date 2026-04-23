@@ -10185,19 +10185,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -10205,7 +10205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -14007,6 +14007,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 2
+  enforceCurrentZoneClearance: 1
 --- !u!4 &280462596 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
@@ -14657,6 +14659,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 2
+  enforceCurrentZoneClearance: 1
 --- !u!1001 &290063636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15568,7 +15572,7 @@ Transform:
   m_GameObject: {fileID: 306267510}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.199997, y: -6.220175, z: 16.3}
+  m_LocalPosition: {x: 3.164, y: -6.220175, z: 14.6}
   m_LocalScale: {x: 0.6, y: 0.5, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22741,6 +22745,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 1
+  enforceCurrentZoneClearance: 1
 --- !u!1 &461877847
 GameObject:
   m_ObjectHideFlags: 0
@@ -38247,6 +38253,8 @@ GameObject:
   m_Component:
   - component: {fileID: 783909272}
   - component: {fileID: 783909273}
+  - component: {fileID: 783909275}
+  - component: {fileID: 783909274}
   m_Layer: 0
   m_Name: Docking Bay
   m_TagString: Untagged
@@ -38312,6 +38320,45 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 30ab63f8570064ab58ee202cc51a3f0b, type: 2}
   m_BuildHeightMesh: 0
+--- !u!114 &783909274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 783909271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 808442f8c079ed347ac80a58ff9ead07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  zoneName: DockingBay
+  requiredClearance: 1
+  suspicionRatePerSecond: 15
+  sprintSuspicionRate: 20
+  wrongClearanceSuspicionScale: 0.2
+  immediateInvestigation: 0
+--- !u!65 &783909275
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 783909271}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4, y: 4, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &785897607
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45730,7 +45777,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 185
+      value: 180.83
       objectReference: {fileID: 0}
     - target: {fileID: 400154, guid: 6996385895b383749b266464bf872c69, type: 3}
       propertyPath: m_LocalPosition.y
@@ -53953,6 +54000,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 1
+  enforceCurrentZoneClearance: 1
 --- !u!4 &1125564625 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 499840, guid: 9d79238e340446545b920b58f2cd9574, type: 3}
@@ -60061,6 +60110,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 2
+  enforceCurrentZoneClearance: 1
 --- !u!195 &1247200011
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -63817,6 +63868,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 1
+  enforceCurrentZoneClearance: 1
 --- !u!1001 &1314185383
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -64292,6 +64345,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 1
+  enforceCurrentZoneClearance: 1
 --- !u!195 &1317781559
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -66726,6 +66781,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 1
+  enforceCurrentZoneClearance: 1
 --- !u!1 &1374218145
 GameObject:
   m_ObjectHideFlags: 0
@@ -74810,13 +74867,15 @@ MonoBehaviour:
   visionBlockers:
     serializedVersion: 2
     m_Bits: 51
-  peripheralFovDegrees: 210
+  peripheralFovDegrees: 160
   fullSightSuspicionRate: 40
   glimpseSuspicionRate: 15
   faintNoiseSuspicion: 12
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 2
+  enforceCurrentZoneClearance: 1
 --- !u!1 &1528513793
 GameObject:
   m_ObjectHideFlags: 0
@@ -84228,6 +84287,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 1
+  enforceCurrentZoneClearance: 1
 --- !u!4 &1718535737 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 498868, guid: f18932879bb23b84ca5370b65419ee41, type: 3}
@@ -85755,7 +85816,7 @@ Transform:
   m_GameObject: {fileID: 1745385036}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 38.4, y: 0, z: 36.998}
+  m_LocalPosition: {x: 53.13, y: 0, z: 35.85}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -93903,6 +93964,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1934017751}
+  - component: {fileID: 1934017753}
+  - component: {fileID: 1934017752}
   m_Layer: 0
   m_Name: Connector_Docking_To_Area2
   m_TagString: Untagged
@@ -93939,6 +94002,45 @@ Transform:
   - {fileID: 642881975}
   m_Father: {fileID: 511472982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1934017752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934017750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 808442f8c079ed347ac80a58ff9ead07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  zoneName: Connector
+  requiredClearance: 2
+  suspicionRatePerSecond: 15
+  sprintSuspicionRate: 20
+  wrongClearanceSuspicionScale: 0.2
+  immediateInvestigation: 0
+--- !u!65 &1934017753
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934017750}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4, y: 4, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1934656191 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
@@ -94565,6 +94667,8 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  minimumTrustedClearance: 2
+  enforceCurrentZoneClearance: 1
 --- !u!4 &1950768911 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}

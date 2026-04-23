@@ -27,6 +27,9 @@ public class GuardAI : MonoBehaviour
     [SerializeField] float strongHearingFraction = 0.6f;
     [SerializeField] float runSpeed = 4f;
     [SerializeField] float catchDistance = 1.5f;
+    [Header("Disguise Access Check")]
+    [SerializeField] SecurityClearance minimumTrustedClearance = SecurityClearance.Guard02;
+    [SerializeField] bool enforceCurrentZoneClearance = true;
 
     private NavMeshAgent _agent;
     private GuardState _state = GuardState.Patrol;
@@ -75,6 +78,19 @@ public class GuardAI : MonoBehaviour
 
     void Start()
     {
+        if (player == null)
+        {
+            DisguiseSystem playerDisguise = FindFirstObjectByType<DisguiseSystem>();
+            if (playerDisguise != null)
+                player = playerDisguise.transform;
+            else
+            {
+                GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+                if (playerObj != null)
+                    player = playerObj.transform;
+            }
+        }
+
         if (!_agent.isOnNavMesh)
             Debug.LogWarning("GuardAI: NavMeshAgent is not on a NavMesh.", this);
 
@@ -342,11 +358,18 @@ public class GuardAI : MonoBehaviour
     {
         int visionLevel = GetPlayerVisionLevel();
         bool isDisguised = _disguiseSystem != null && _disguiseSystem.IsDisguised;
+        bool hasTrustedClearance = _disguiseSystem != null &&
+                                   _disguiseSystem.CurrentClearance >= minimumTrustedClearance;
+        bool hasZoneClearance = _disguiseSystem != null &&
+                                (!enforceCurrentZoneClearance ||
+                                 _disguiseSystem.CurrentZone == null ||
+                                 _disguiseSystem.CurrentClearance >= _disguiseSystem.CurrentZone.RequiredClearance);
+        bool effectivelyDisguised = isDisguised && hasTrustedClearance && hasZoneClearance;
 
         if (player != null && visionLevel >= 1)
             _lastKnownPlayerPosition = player.position;
 
-        SetObserving(visionLevel > 0 && !isDisguised);
+        SetObserving(visionLevel > 0 && !effectivelyDisguised);
 
         if (_disguiseSystem == null)
         {
@@ -355,7 +378,8 @@ public class GuardAI : MonoBehaviour
             return;
         }
 
-        if (isDisguised)
+        // Disguises only protect when they satisfy the current zone's clearance requirement.
+        if (effectivelyDisguised)
         {
             if (_state == GuardState.Chase || _state == GuardState.Investigate)
                 ReturnToPatrol();
