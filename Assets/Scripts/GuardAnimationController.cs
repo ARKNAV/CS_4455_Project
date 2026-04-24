@@ -4,24 +4,29 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(Animator))]
 public class GuardAnimatorController : MonoBehaviour
 {
-    [SerializeField] string speedParam = "speed";
+    [SerializeField] private string speedParam = "Speed";
 
-    NavMeshAgent agent;
-    Animator animator;
+    private NavMeshAgent _agent;
+    private Animator     _animator;
+    private GuardAI      _guardAI;
+    private int          _speedHash;
 
     void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        _agent    = GetComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();
+        _guardAI  = GetComponent<GuardAI>();
+        _speedHash = Animator.StringToHash(speedParam);
     }
 
     void Update()
     {
         // Don't overwrite animator params during a takedown
-        GuardAI guardAI = GetComponent<GuardAI>();
-        if (guardAI != null && guardAI.IsBeingTakenDown) return;
+        if (_guardAI != null && _guardAI.IsBeingTakenDown) return;
 
-        float speed = agent.velocity.magnitude;
-        animator.SetFloat(speedParam, speed);
+        if (_agent == null || _animator == null) return;
+
+        float speed = _agent.velocity.magnitude;
+        _animator.SetFloat(_speedHash, speed);
     }
 }

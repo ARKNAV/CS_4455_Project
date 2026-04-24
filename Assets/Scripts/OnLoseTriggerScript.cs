@@ -5,8 +5,8 @@ public class OnLoseTriggerScript : MonoBehaviour
 {
     public CanvasGroup loseCanvas;
 
-    [Tooltip("Delay in seconds before showing the lose screen, to allow animations to finish.")]
-    public float loseScreenDelay = 4.67f;
+    [Tooltip("Brief pause before showing the lose canvas. CatchPlayerRoutine already waits for the clip, so keep this small.")]
+    public float loseScreenDelay = 0.3f;
 
     void OnEnable()
     {
@@ -20,16 +20,18 @@ public class OnLoseTriggerScript : MonoBehaviour
 
     void OnLose()
     {
+        // Freeze time immediately so no second takedown can trigger
+        Time.timeScale = 0f;
         StartCoroutine(ShowLoseScreenAfterDelay());
     }
 
     private IEnumerator ShowLoseScreenAfterDelay()
     {
-        yield return new WaitForSeconds(loseScreenDelay);
+        // WaitForSecondsRealtime is unaffected by timeScale=0
+        yield return new WaitForSecondsRealtime(loseScreenDelay);
 
         loseCanvas.interactable = true;
         loseCanvas.blocksRaycasts = true;
         loseCanvas.alpha = 1f;
-        Time.timeScale = 0f;
     }
 }

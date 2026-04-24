@@ -67,8 +67,15 @@ public class GameManager : MonoBehaviour
 
             BasicControlScript bcs = ds.GetComponent<BasicControlScript>();
             if (bcs != null) bcs.enabled = false;
+
+            Rigidbody rb = ds.GetComponent<Rigidbody>();
+            if (rb != null && !rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
         }
-        LoseTriggerEvent.Invoke();
+        LoseTriggerEvent?.Invoke();
         // Reload after delay
         //Invoke(nameof(ReloadCurrentScene), failReloadDelay);
     }

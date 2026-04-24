@@ -4,31 +4,44 @@ using UnityEngine;
 public class OnWinTriggerScript : MonoBehaviour
 {
     public CanvasGroup winCanvas;
-    void OnEnable()
+    public float winScreenDelay = 2f;
+
+    void OnEnable()  => BlueprintConsoleController.WinTriggerEvent += OnWin;
+    void OnDisable() => BlueprintConsoleController.WinTriggerEvent -= OnWin;
+
+    void OnWin()
     {
-        //print("enabled");
-        BlueprintConsoleController.WinTriggerEvent += UnhideCanvas;
+        FreezePlayer();
+        StartCoroutine(ShowCanvas());
     }
 
-    void OnDisable()
+    IEnumerator ShowCanvas()
     {
-        //print("disabled");
-        BlueprintConsoleController.WinTriggerEvent -= UnhideCanvas;
-    }
-
-//This is a little silly looking but i had to let the door finish its animation so im using WaitForSeconds()
-    void UnhideCanvas()
-    {
-        StartCoroutine(WaitUnhideCanvas());
-    }
-
-    IEnumerator WaitUnhideCanvas()
-    {
-        yield return new WaitForSeconds(2);
-
-        winCanvas.interactable = true;
-        winCanvas.blocksRaycasts = true;
+        yield return new WaitForSecondsRealtime(winScreenDelay);
+        winCanvas.interactable = winCanvas.blocksRaycasts = true;
         winCanvas.alpha = 1f;
         Time.timeScale = 0f;
+    }
+
+    void FreezePlayer()
+    {
+        DisguiseSystem ds = FindFirstObjectByType<DisguiseSystem>();
+        if (ds == null) return;
+
+        var cinput = ds.GetComponent<CharacterInputController>();
+        var bcs    = ds.GetComponent<BasicControlScript>();
+        var rb     = ds.GetComponent<Rigidbody>();
+        var anim   = ds.GetComponent<Animator>();
+
+        if (cinput != null) cinput.enabled = false;
+        if (bcs    != null) bcs.enabled    = false;
+        if (rb != null) { rb.linearVelocity = rb.angularVelocity = Vector3.zero; }
+
+        if (anim != null && anim.runtimeAnimatorController != null)
+        {
+            anim.SetFloat("speed", 0f); anim.SetFloat("MoveX", 0f); anim.SetFloat("MoveY", 0f);
+            anim.SetBool("isCrouching", false); anim.SetBool("isSprinting", false);
+            anim.SetInteger("PeekDirection", 0); anim.SetBool("IsPeeking", false);
+        }
     }
 }

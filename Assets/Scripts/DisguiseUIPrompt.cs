@@ -16,6 +16,15 @@ public class DisguiseUIPrompt : MonoBehaviour
     [Header("Settings")]
     public float fadeSpeed = 8f;
 
+    [Header("Pulse (while showing)")]
+    [Tooltip("Alpha oscillates while the prompt is visible to draw attention")]
+    public bool pulseWhenShowing = true;
+    [Tooltip("Pulse cycles per second")]
+    public float pulseFrequency = 2f;
+    [Tooltip("Minimum alpha during pulse")]
+    [Range(0f, 1f)]
+    public float pulseMinAlpha = 0.65f;
+
     private CanvasGroup canvasGroup;
     private bool isShowing = false;
 
@@ -39,8 +48,24 @@ public class DisguiseUIPrompt : MonoBehaviour
 
     void Update()
     {
-        float targetAlpha = isShowing ? 1f : 0f;
-        canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, targetAlpha, Time.deltaTime * fadeSpeed);
+        if (isShowing)
+        {
+            if (pulseWhenShowing && canvasGroup.alpha > 0.1f)
+            {
+                // Pulse between pulseMinAlpha and 1 once fully faded in
+                float pulse = (Mathf.Sin(Time.time * pulseFrequency * Mathf.PI * 2f) * 0.5f + 0.5f)
+                              * (1f - pulseMinAlpha) + pulseMinAlpha;
+                canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, pulse, Time.deltaTime * pulseFrequency * 2f);
+            }
+            else
+            {
+                canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 1f, Time.deltaTime * fadeSpeed);
+            }
+        }
+        else
+        {
+            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 0f, Time.deltaTime * fadeSpeed);
+        }
     }
 
     /// <summary>Show the prompt. The requester is tracked so only it can hide it.</summary>

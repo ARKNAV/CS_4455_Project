@@ -38,19 +38,38 @@ public class GuardAI : MonoBehaviour
     private Vector3 _lastKnownPlayerPosition;
     private bool _isObserving;
     private bool _isBeingTakenDown = false;
+    private static bool _playerBeingCaught = false;
+
+    [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStaticState() { _playerBeingCaught = false; }
     private bool _pinToGround = false;
     private float _pinnedY;
     private Animator _animator;
 
-    private static readonly int TakedownHash = Animator.StringToHash("Takedown");
+    private static readonly int TakedownHash       = Animator.StringToHash("Takedown");
+    private static readonly int TakedownVictimHash = Animator.StringToHash("TakedownVictim");
 
     public bool IsBeingTakenDown => _isBeingTakenDown;
+
+    /// <summary>
+    /// Atomically claims this guard for a takedown. Returns true only if the caller
+    /// is the first to claim it; false if another system already claimed it.
+    /// This prevents the player-initiated takedown and the guard's CatchPlayerRoutine
+    /// from both firing on the same frame.
+    /// </summary>
+    public bool ClaimTakedown()
+    {
+        if (_isBeingTakenDown) return false;
+        _isBeingTakenDown = true;
+        return true;
+    }
     public bool IsChasing => _state == GuardState.Chase;
     public bool IsInvestigating => _state == GuardState.Investigate;
     public bool IsSuspicious => _state != GuardState.Patrol;
 
     void Awake()
     {
+        _playerBeingCaught = false;
         _agent = GetComponent<NavMeshAgent>();
         if (_agent == null)
             _agent = gameObject.AddComponent<NavMeshAgent>();
@@ -237,65 +256,119 @@ public class GuardAI : MonoBehaviour
         }
     }
 
+    [Header("Catch / Tackle")]
+    [Tooltip("Fallback clip duration if we cannot read it from the Animator.")]
+    [SerializeField] private float catchTakedownDurationFallback = 9.9f;
+    [Tooltip("How far behind the player the guard snaps (local Z offset from the shared anchor).")]
+    [SerializeField] private float tackleSnapDistance = 0.7f;
+    [Tooltip("Local-space offset applied to the guard's snap position to correct for animation lateral drift.")]
+    [SerializeField] private Vector3 guardSnapOffset = Vector3.zero;
+    [Tooltip("Local-space offset applied to the player's snap position to correct for animation lateral drift.")]
+    [SerializeField] private Vector3 playerSnapOffset = Vector3.zero;
+
     private IEnumerator CatchPlayerRoutine()
     {
-        if (_isBeingTakenDown) yield break;
-        _isBeingTakenDown = true;
+        // ClaimTakedown() atomically sets _isBeingTakenDown; if another system
+        // already claimed this guard (e.g. player pressed F on the same frame),
+        // we bail out immediately so only one takedown sequence runs.
+        if (!ClaimTakedown()) yield break;
 
-        GuardAI[] allGuards = FindObjectsByType<GuardAI>(FindObjectsSortMode.None);
-        foreach (GuardAI g in allGuards)
-        {
-            if (g == this || g == null) continue;
-            g.StopPursuit();
-        }
+        // Only one guard can execute CatchPlayerRoutine at a time. A second guard
+        // that reaches catchDistance on the same frame passes ClaimTakedown() on
+        // itself but must yield here so the player isn't double-triggered.
+        if (_playerBeingCaught) { _isBeingTakenDown = false; yield break; }
+        _playerBeingCaught = true;
 
-        if (_agent != null && _agent.enabled && _agent.isOnNavMesh)
-            _agent.ResetPath();
+        // Stop all other guards chasing
+        foreach (GuardAI g in FindObjectsByType<GuardAI>(FindObjectsSortMode.None))
+            if (g != null && g != this) g.StopPursuit();
+
+        if (_agent != null && _agent.enabled && _agent.isOnNavMesh) _agent.ResetPath();
         if (_agent != null) _agent.enabled = false;
-
         SetObserving(false);
 
-        if (_animator != null)
+        if (player == null) { GameManager.TriggerLose(); yield break; }
+
+        // ── Freeze player ──
+        CharacterInputController inputCtrl = player.GetComponent<CharacterInputController>();
+        BasicControlScript controlScript   = player.GetComponent<BasicControlScript>();
+        Rigidbody playerRb                 = player.GetComponent<Rigidbody>();
+        Animator  playerAnimator           = player.GetComponent<Animator>();
+
+        if (inputCtrl    != null) inputCtrl.enabled    = false;
+        if (controlScript != null) controlScript.enabled = false;
+        if (playerRb != null)
         {
-            _animator.SetFloat("speed", 0f);
-            _animator.SetFloat("Speed", 0f);
+            if (!playerRb.isKinematic) { playerRb.linearVelocity = Vector3.zero; playerRb.angularVelocity = Vector3.zero; }
+            playerRb.isKinematic = true;
         }
 
-        if (player != null)
-        {
-            Animator playerAnimator = player.GetComponent<Animator>();
-            Rigidbody playerRb = player.GetComponent<Rigidbody>();
-            CharacterInputController inputCtrl = player.GetComponent<CharacterInputController>();
-            BasicControlScript controlScript = player.GetComponent<BasicControlScript>();
+        // Zero blend params on both animators so we enter the catch animations from a clean idle pose
+        ZeroAnimatorParams(playerAnimator);
+        ZeroAnimatorParams(_animator);
 
-            if (inputCtrl != null) inputCtrl.enabled = false;
-            if (controlScript != null) controlScript.enabled = false;
+        Vector3 toPlayer = player.position - transform.position;
+        toPlayer.y = 0f;
+        Vector3 guardFwd = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : transform.forward;
+        Quaternion facingRot = Quaternion.LookRotation(guardFwd, Vector3.up);
 
-            if (playerRb != null)
-            {
-                playerRb.isKinematic = true;
-                playerRb.linearVelocity = Vector3.zero;
-                playerRb.angularVelocity = Vector3.zero;
-            }
+        // Rotate player (victim) to face away from guard (same direction as guard faces)
+        player.rotation = facingRot;
 
-            if (playerAnimator != null)
-            {
-                playerAnimator.SetFloat("speed", 0f);
-                playerAnimator.SetFloat("MoveX", 0f);
-                playerAnimator.SetFloat("MoveY", 0f);
-                playerAnimator.SetBool("isCrouching", false);
-                playerAnimator.SetBool("isSprinting", false);
-                playerAnimator.SetInteger("PeekDirection", 0);
-                playerAnimator.SetBool("IsPeeking", false);
-            }
+        // Guard (attacker) snaps tackleSnapDistance behind the player (victim).
+        // guardSnapOffset is a local-space fine-tune (x=lateral, y=height, z=depth).
+        // Empirical baseline: 0.4m behind places guard hips ~0.35m behind player hips.
+        // Set guardSnapOffset.y negative if guard character is taller than player.
+        Vector3 attackerPos = player.position - guardFwd * tackleSnapDistance;
+        attackerPos.y      = player.position.y + guardSnapOffset.y;
+        attackerPos        += facingRot * new Vector3(guardSnapOffset.x, 0f, guardSnapOffset.z);
 
-            yield return null;
+        // Hide guard renderers during the snap to prevent phasing-through visual,
+        // then teleport instantly and re-enable once animation has started.
+        Renderer[] guardRenderers = GetComponentsInChildren<Renderer>(true);
+        foreach (var r in guardRenderers) r.enabled = false;
 
-            if (playerAnimator != null)
-                playerAnimator.SetTrigger(TakedownHash);
-        }
+        transform.position = attackerPos;
+        transform.rotation = facingRot;
+
+        // Root motion OFF on both — NavMeshAgent and Rigidbody block root motion anyway.
+        if (_animator      != null) _animator.applyRootMotion      = false;
+        if (playerAnimator != null) playerAnimator.applyRootMotion = false;
+
+        yield return null;
+
+        // Guard is attacker, player is victim — fire triggers then restore renderers
+        if (_animator      != null) _animator.SetTrigger(TakedownHash);
+        if (playerAnimator != null) playerAnimator.SetTrigger(TakedownVictimHash);
+
+        // Re-enable guard renderers now that both are in position and animation is starting
+        foreach (var r in guardRenderers) r.enabled = true;
+
+        TakedownDiagnostic diag = player.GetComponent<TakedownDiagnostic>();
+        if (diag != null) diag.StartLogging(this);
+
+        yield return new WaitForSeconds(catchTakedownDurationFallback);
 
         GameManager.TriggerLose();
+    }
+
+    private static readonly System.Collections.Generic.HashSet<string> _zeroParamNames
+        = new System.Collections.Generic.HashSet<string>
+        { "speed", "Speed", "MoveX", "MoveY", "isCrouching", "isSprinting", "IsPeeking", "PeekDirection" };
+
+    private static void ZeroAnimatorParams(Animator anim)
+    {
+        if (anim == null || anim.runtimeAnimatorController == null) return;
+        foreach (var p in anim.parameters)
+        {
+            if (!_zeroParamNames.Contains(p.name)) continue;
+            switch (p.type)
+            {
+                case AnimatorControllerParameterType.Float:   anim.SetFloat(p.nameHash, 0f);    break;
+                case AnimatorControllerParameterType.Int:     anim.SetInteger(p.nameHash, 0);   break;
+                case AnimatorControllerParameterType.Bool:    anim.SetBool(p.nameHash, false);  break;
+            }
+        }
     }
 
     public void StopPursuit()
@@ -494,7 +567,8 @@ public class GuardAI : MonoBehaviour
 
     public void OnTakedown(float duration)
     {
-        if (_isBeingTakenDown) return;
+        // Caller must have already called ClaimTakedown() successfully.
+        // _isBeingTakenDown is already true; just start the routine.
         StartCoroutine(TakedownRoutine(duration));
     }
 
@@ -509,30 +583,16 @@ public class GuardAI : MonoBehaviour
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.isKinematic = true;
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
         }
 
         SetObserving(false);
 
-        if (player != null)
-        {
-            Vector3 toPlayer = player.position - transform.position;
-            toPlayer.y = 0f;
-            if (toPlayer.sqrMagnitude > 0.001f)
-                transform.rotation = Quaternion.LookRotation(toPlayer.normalized);
-        }
+        ZeroAnimatorParams(_animator);
 
-        if (_animator != null)
-        {
-            _animator.SetFloat("speed", 0f);
-            _animator.SetFloat("Speed", 0f);
-            _animator.SetBool("isCrouching", false);
-            _animator.SetBool("isSprinting", false);
-            _animator.SetInteger("PeekDirection", 0);
-            _animator.SetBool("IsPeeking", false);
-        }
+        if (_animator != null) _animator.applyRootMotion = false;
 
         _pinnedY = transform.position.y;
         _pinToGround = true;
@@ -540,9 +600,9 @@ public class GuardAI : MonoBehaviour
         yield return null;
 
         if (_animator != null)
-            _animator.SetTrigger(TakedownHash);
+            _animator.SetTrigger(TakedownVictimHash);
 
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSeconds(Mathf.Max(0f, duration - Time.deltaTime));
 
         _pinToGround = false;
 

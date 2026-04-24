@@ -4156,8 +4156,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   takedownRange: 2
   takedownHalfAngle: 100
-  takedownDuration: 4.67
+  takedownDurationFallback: 16.2
+  snapBehindDistance: 0.4
+  snapDuration: 0.22
+  playerSnapOffset: {x: 0, y: 0, z: 0}
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
   playerAnimator: {fileID: 0}
+--- !u!114 &66678688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66678666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6240afa9261f4144980a116edcd2e4f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &68425865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12038,6 +12054,9 @@ MonoBehaviour:
   promptText: {fileID: 1902841086}
   backgroundPanel: {fileID: 240341804}
   fadeSpeed: 8
+  pulseWhenShowing: 1
+  pulseFrequency: 2
+  pulseMinAlpha: 0.65
 --- !u!114 &240341804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14071,6 +14090,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &280462596 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
@@ -14724,6 +14747,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &290063636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14923,6 +14950,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &293507758
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17478,7 +17509,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 20
   m_TargetDisplay: 0
 --- !u!224 &328495367
 RectTransform:
@@ -22912,6 +22943,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &461877847
 GameObject:
   m_ObjectHideFlags: 0
@@ -24025,6 +24060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   winCanvas: {fileID: 478271520}
+  winScreenDelay: 2
 --- !u!4 &478667555 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
@@ -25637,7 +25673,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!4 &517347393 stripped
 Transform:
@@ -32644,6 +32680,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 4
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &656475430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46420,6 +46460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   winCanvas: {fileID: 478271520}
+  winScreenDelay: 2
 --- !u!1001 &953480434
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54573,6 +54614,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1125564625 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 499840, guid: 9d79238e340446545b920b58f2cd9574, type: 3}
@@ -57422,6 +57467,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &1177442299
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60876,6 +60925,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!195 &1247200011
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -64725,6 +64778,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &1314185383
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -65200,6 +65257,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!195 &1317781559
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -67741,6 +67802,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &1374218145
 GameObject:
   m_ObjectHideFlags: 0
@@ -75927,6 +75992,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &1528513793
 GameObject:
   m_ObjectHideFlags: 0
@@ -80023,6 +80092,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 66678685}
+    - targetCorrespondingSourceObject: {fileID: 4978816779655408403, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 66678688}
   m_SourcePrefab: {fileID: 100100000, guid: ce2548dbc81851b488075bf19a61322a, type: 3}
 --- !u!4 &1611616789 stripped
 Transform:
@@ -80991,7 +81063,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!224 &1636387881
 RectTransform:
@@ -85403,6 +85475,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1718535737 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 498868, guid: f18932879bb23b84ca5370b65419ee41, type: 3}
@@ -95838,6 +95914,10 @@ MonoBehaviour:
   strongHearingFraction: 0.6
   runSpeed: 1.5
   catchDistance: 1.5
+  catchTakedownDurationFallback: 16.2
+  tackleSnapDistance: 0.4
+  guardSnapOffset: {x: 0, y: -0.2, z: 0}
+  playerSnapOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1950768911 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400154, guid: bdd7a03fd93bf2d4cb6babd63ceabee8, type: 3}
@@ -104338,7 +104418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loseCanvas: {fileID: 2124307558}
-  loseScreenDelay: 4.67
+  loseScreenDelay: 0.5
 --- !u!1 &2124737593 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 141970, guid: ac7a01ca06ca9044eb15b32cb7a936f8, type: 3}
