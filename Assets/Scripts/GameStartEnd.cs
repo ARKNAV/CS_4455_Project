@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class GameStartEnd : MonoBehaviour
 {
-    [SerializeField] private string gameplaySceneName = "alpha copy";
+    [SerializeField] private string gameplaySceneName = "Alpha";
 
      public void QuitGame()
     {
